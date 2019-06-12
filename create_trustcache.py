@@ -27,7 +27,12 @@ def create_tc(hashes):
     tc += struct.pack("<I", len(hashes))
 
     for hash_txt in hashes:
-        assert(len(hash_txt) == 40)
+        if len(hash_txt) == 0:
+            continue
+
+        assert(len(hash_txt) >= 40)
+
+        hash_txt = hash_txt[:40]
 
         #write the hash itself
         for i in xrange(5):
@@ -49,4 +54,3 @@ if __name__ == "__main__":
     hashes = sorted(hashes)
     tc = create_tc(hashes)
     open(sys.argv[2], "wb").write(tc)
-
