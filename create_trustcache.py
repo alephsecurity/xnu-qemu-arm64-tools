@@ -36,8 +36,8 @@ def create_tc(hashes):
 
         #write the hash itself
         for i in xrange(5):
-            four_bytes = hash_txt[i * 8 : (i + 1) * 8]
-            number = int(four_bytes, 16)
+            eight_bytes = hash_txt[i * 8 : (i + 1) * 8]
+            number = int(eight_bytes, 16)
             tc += struct.pack(">I", number)
 
         #hash type
