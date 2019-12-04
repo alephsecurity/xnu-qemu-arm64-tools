@@ -1,0 +1,6 @@
+{
+	"0xfffffff0070db3fc" : "_lck_mtx_sleep",
+	"0xfffffff0070db634" : "_lck_mtx_sleep_deadline",
+	"0xfffffff007178940" : "FUN_fffffff007179a0c",
+	"0xfffffff0071ac920" : "FUN_fffffff0071ac89c"
+}
