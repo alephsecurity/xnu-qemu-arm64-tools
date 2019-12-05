@@ -1,3 +1,14 @@
+# XNU Kernel Debug - GDB Helper Functions
+
+To ease kernel debugging for our project we'd developed some gdb scripts that will help us along the way.
+This is only a beggining, more will be added with time.
+
+> This is an open source project! Feel more than welcome to contribute! Lets bring the iOS on QEMU up and running :)
+
+### Important Note
+Those scripts works on the kernel version presented in our work. Some of the functionality was availeble only after reversing the relevant code of specific kernelcashe. Scripts do not support debugging of kernelcache that runs with KSLR!
+
+
 Show list of all threads
 ```shell
   $ xnu-threads global
