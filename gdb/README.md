@@ -8,7 +8,18 @@ This is only a beggining, more will be added with time.
 ### Important Note
 Those scripts works on the kernel version presented in our work. Some of the functionality was availeble only after reversing the relevant code of specific kernelcashe. Scripts do not support debugging of kernelcache that runs with KSLR!
 
+### Install
+After completing all steps described [here](https://alephsecurity.com/2019/06/17/xnu-qemu-arm64-1/), copy this project to your project directory (or any other place), run gdb, connect to the QEMU server (target remote :1234) and run:
+```shell
+  $ source config.py
+```
+ After any edit of the scripts for the change to take effect run
 
+```shell
+  $ source reload.py
+```
+
+### Use
 Show list of all threads
 ```shell
   $ xnu-threads global
