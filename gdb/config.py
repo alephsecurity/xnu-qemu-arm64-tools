@@ -4,6 +4,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.expanduser(__file__)))
 
 try:
+    import xnu.zone
     import xnu.tasks
     import xnu.utils
     import xnu.sys_info
