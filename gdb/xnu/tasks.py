@@ -1,5 +1,5 @@
-from xnu.xnu_types import ThreadsIterator, TasksIterator, isTaskExist, isThreadExist, getMaxLengthProcName 
-from xnu.xnu_types import Thread, ThreadVoucher, getTheadInfoTitle, getMaxLengthPcName, getMaxLengthContName
+from xnu.xnu_types import ThreadsIterator, TasksIterator,IPCEntryIterator, isTaskExist, isThreadExist, getMaxLengthProcName 
+from xnu.xnu_types import Thread, Task, IPCEntry, IPCSpace, ThreadVoucher, getTheadInfoTitle, getMaxLengthPcName, getMaxLengthContName
 from  xnu.sys_info import isUserThread, isValidPtr
 import xnu.utils as utils
 import traceback
@@ -26,7 +26,7 @@ class PrintThreadList(gdb.Command):
                         if  isTaskExist(requested_task): #May be not safe...
                             self.printAllThreads(task=requested_task)
                     except:
-                        print(gdb.GdbError("wrong args"))
+                        gdb.GdbError(gdb.GdbError("wrong args"))
             else:
                 raise gdb.GdbError("wrong args")
         except:
@@ -87,6 +87,26 @@ class PrintThreadInfo(gdb.Command):
 
 PrintThreadInfo()
 
+class PrintTaskInfo(gdb.Command):
+    def __init__(self):
+        super(PrintTaskInfo, self).__init__("xnu-task-info", gdb.COMMAND_DATA)        
+
+    def invoke(self, arg, from_tty):
+        try:
+            argv = gdb.string_to_argv(arg)
+            if len(argv) == 1:
+                task = int(argv[0],0)
+                if isTaskExist(task):
+                    gdb.write(Task(task).printTaskInfoLong()+'\n')
+                else:
+                    gdb.write("Given task do not exist\n")
+            else:
+                gdb.write("wrong args\n")
+        except:
+            raise gdb.GdbError(traceback.format_exc())
+
+PrintTaskInfo()
+
 class PrintVoucherInfo(gdb.Command):
     def __init__(self):
         super(PrintVoucherInfo, self).__init__("xnu-voucher-info", gdb.COMMAND_DATA)
@@ -102,3 +122,35 @@ class PrintVoucherInfo(gdb.Command):
         except:
             raise gdb.GdbError(traceback.format_exc())
 PrintVoucherInfo()
+
+
+class PrintIPCEntryList(gdb.Command):
+    def __init__(self):
+        super(PrintIPCEntryList, self).__init__("xnu-ipc_entry-list", gdb.COMMAND_DATA)
+    
+    def invoke(self, arg, from_tty):
+        try:
+            argv = gdb.string_to_argv(arg)
+            if len(argv) == 2 and isValidPtr(int(argv[1],0)):
+                if argv[0] == "-task" and isTaskExist(int(argv[1],0)):
+                    task = int(argv[1],0)
+                    self.printAllEntries(Task(task).ipc_space)
+                elif argv[0] == "-space":
+                    space = int(argv[1],0)
+                    self.printAllEntries(space)
+                else:
+                    gdb.write("wrong args, usage $ xnu-ipc_entry-list -task/table \{PTR\}\n")
+            else:
+                gdb.write(f"wrong args\n")
+        except:
+            raise gdb.GdbError(traceback.format_exc())
+
+    def printAllEntries(self,address):
+        gdb.write("=================================================\n")
+        gdb.write(IPCSpace(address).printIPCSpaceInfo())
+        gdb.write("=================================================\n\n")
+
+        for entry in iter(IPCEntryIterator(address)):
+            gdb.write(f"{entry.printIPCEntryInfo():<47}" )
+            gdb.write("-----------------------------------------------\n")
+PrintIPCEntryList()

@@ -6,6 +6,7 @@ NULL_PTR = 0x0000000000000000
 NULL_PTR_STR = "0x0000000000000000"
 CURRENT_THREAD = "$TPIDR_EL1"
 
+IE_BITS_TYPE_MASK = 0x001f0000
 
 class NextPcHelpOffsets(Enum):
     NEXT_IN_THREAD_RUN = 0xfffffff0070e7d0c
@@ -37,7 +38,24 @@ class TaskOffsets(Enum):
     TASK_NEXT = 0x28
     THREAD_LST_FROM_TASK = 0x40
     BSD_INFO = 0x358
+    IPC_SPACE = 0x300
 
 class BSDInfoOffsets(Enum):
     PID_IN_BSD_INFO = 0x60
     NAME_INBSD_INFO = 0x261
+
+class IPCSpaceOffsets(Enum):
+    IS_TABLE_SIZE = 0x18
+    IS_TABLE_FREE = 0x1C
+    IS_TABLE = 0x20
+    IS_LOW_MOD = 0x38
+    IS_HIGH_MOD = 0x3C
+
+class IPCEntryOffsets(Enum):
+    IE_BITS = 0x08
+    IE_INDEX = 0x0C
+    INDEX = 0x10
+
+class IPCObjectOffsets(Enum):
+    IO_REFS = 0x04
+    IO_LOCK_DATA = 0x08

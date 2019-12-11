@@ -1,6 +1,7 @@
-from xnu.constants import ThreadOffsets,BSDInfoOffsets, TaskOffsets, ThrdItrType,NextPcHelpOffsets , NULL_PTR, GLOBAL_THREADS_PTR, GLOBAL_TASKS_PTR, NULL_PTR_STR
+from xnu.constants import ThreadOffsets,BSDInfoOffsets, TaskOffsets, ThrdItrType,NextPcHelpOffsets ,IPCSpaceOffsets,IPCEntryOffsets,IPCObjectOffsets
+from xnu.constants import  NULL_PTR, GLOBAL_THREADS_PTR, GLOBAL_TASKS_PTR, NULL_PTR_STR, IE_BITS_TYPE_MASK
 from xnu.utils import getPointerAt,getLongAt,getIntAt,printValueOf,getStringAt,printPtrAsString
-from xnu.sys_info import getCurrentTaskPtr,getCurrentThreadPtr, isUserThread,getSymbol
+from xnu.sys_info import getCurrentTaskPtr, getCurrentThreadPtr, isUserThread,getSymbol, isValidPtr
 import traceback
 import gdb
 
@@ -125,6 +126,61 @@ class BsdInfo:
         else:
             raise gdb.GdbError(f"Null pointer in {__name__}")
 
+#ipc_space
+class IPCSpace:
+    def __init__(self, address):
+        if address != NULL_PTR:
+            self.is_table  = getPointerAt(address +  IPCSpaceOffsets.IS_TABLE.value)
+            self.is_table_size = getIntAt(address + IPCSpaceOffsets.IS_TABLE_SIZE.value)
+            self.is_table_free = getIntAt(address + IPCSpaceOffsets.IS_TABLE_FREE.value)
+        else:
+            raise gdb.GdbError(f"Null pointer for {__name__}")
+    def printIPCSpaceInfo(self):
+        res_str = ""
+        res_str += f"ipc_space->is_table {hex(self.is_table)}\n"
+        res_str += f"ipc_space->is_table_size {self.is_table_size} - (first reserved)\n"
+        res_str += f"ipc_space->is_table_free {self.is_table_free}\n"
+        return res_str
+
+
+class IPCEntry:
+    def __init__(self, address):
+        if address != NULL_PTR:
+            self.address = address
+            self.ie_object = getPointerAt(address)
+            self.ie_bits = getIntAt(address + IPCEntryOffsets.IE_BITS.value)
+            self.ie_index = getIntAt(address + IPCEntryOffsets.IE_INDEX.value)
+            self.index =  getIntAt(address + IPCEntryOffsets.INDEX.value)
+
+            if self.ie_object:
+                # self.ie_object_object = IPCObject(self.ie_object)
+                pass
+        else:
+            raise gdb.GdbError(f"Wrong pointer to IPC Entry {address}")
+
+    def printIPCEntryInfo(self):
+        res_str = ""
+        res_str += f"ipc_entry->ie_object = {printPtrAsString(self.ie_object)}\n"
+        res_str += f"ipc_entry->ie_bits = {hex(self.ie_bits)}\n"
+        res_str += f"ipc_entry->ie_index = {hex(self.ie_index)}\n"
+        res_str += f"ipc_entry->ie_next = {hex(self.index)}\n"
+        return res_str
+
+class IPCObject:
+    def __init__(self,address):
+        if address != NULL_PTR:
+            self.io_bits = getIntAt(address) #parse it from ipc_object
+            self.io_references = getIntAt(address + IPCObjectOffsets.IO_REFS.value)
+            self.io_lock_data = getIntAt(address + IPCObjectOffsets.IO_LOCK_DATA.value)
+        else:
+            raise gdb.GdbError(f"Wrong pointer to IPC Object {address}")
+
+    def printIPCObjectInfo(self):
+        res_str = ""
+        res_str += f"ipc_object->io_bits {hex(self.io_bits)}"
+        res_str += f"ipc_object->io_references {hex(self.io_references)}"
+        res_str += f"ipc_object->io_lock_data {hex(self.io_lock_data)}"
+        return res_str
 
 #TASK
 class Task:
@@ -134,7 +190,9 @@ class Task:
             self.task_lst_ptr = address + TaskOffsets.TASK_NEXT.value
             self.threads_lst_ptr =  address + TaskOffsets.THREAD_LST_FROM_TASK.value
             self.bsd_info_ptr = getPointerAt(address + TaskOffsets.BSD_INFO.value)
+            self.ipc_space = getPointerAt(address +  TaskOffsets.IPC_SPACE.value)
 
+            self.ipc_space_object = IPCSpace(self.ipc_space)
             self.bsdinfo_object = BsdInfo(self.bsd_info_ptr)
         else:
             raise gdb.GdbError(f"Null pointer in {__name__}")
@@ -145,6 +203,14 @@ class Task:
         res_str += '*' if is_current else ' '
         res_str += f" [{self.bsdinfo_object.bsd_pid}] | {self.bsdinfo_object.bsd_name:<15} |"
         res_str += f"  {hex(self.address)} "
+
+        return res_str
+
+    def printTaskInfoLong(self):
+        res_str = "\n\n"
+        res_str += f"task->bsd_info = {printPtrAsString(self.bsd_info_ptr)}\n"
+        res_str += f"task->ipc_space = {printPtrAsString(self.ipc_space)}\n"
+        res_str += f"task->ipc_space->is_table = {printPtrAsString(self.ipc_space_object.is_table)}\n"
 
         return res_str
         
@@ -310,6 +376,26 @@ class TasksIterator:
             return self.result
         else:
             raise StopIteration     
+
+
+class IPCEntryIterator:
+    def __init__(self,address):
+        if isValidPtr(address):
+            self.entry = IPCSpace(address).is_table
+            self.size = IPCSpace(address).is_table_size 
+            self.index = 0
+        else:
+            raise gdb.GdbError(f"Worng ipc_entry poiner {address}")
+    def __iter__(self):
+        return self
+    def __next__(self):
+        while self.index < self.size:
+            result = IPCEntry(self.entry + (self.index * 0x18))
+            self.index += 1
+            if (result.ie_bits & IE_BITS_TYPE_MASK) != 0:
+                return result
+        raise StopIteration
+
 
 #Global functions
 def isTaskExist(task):

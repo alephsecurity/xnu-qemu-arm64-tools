@@ -28,6 +28,7 @@ def isUserThread(thread):
 def isValidPtr(ptr):
     try:
         getPointerAt(ptr)
+        return True
     except:
         raise gdb.GdbError(f"Wrong pointer! {hex(ptr)}")
 
