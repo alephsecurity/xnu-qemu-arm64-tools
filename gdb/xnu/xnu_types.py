@@ -190,6 +190,7 @@ class Task:
             self.task_lst_ptr = address + TaskOffsets.TASK_NEXT.value
             self.threads_lst_ptr =  address + TaskOffsets.THREAD_LST_FROM_TASK.value
             self.bsd_info_ptr = getPointerAt(address + TaskOffsets.BSD_INFO.value)
+            self.itk_self = getPointerAt(address +  TaskOffsets.ITK_SELF.value)
             self.ipc_space = getPointerAt(address +  TaskOffsets.IPC_SPACE.value)
 
             self.ipc_space_object = IPCSpace(self.ipc_space)
@@ -207,8 +208,9 @@ class Task:
         return res_str
 
     def printTaskInfoLong(self):
-        res_str = "\n\n"
+        res_str = "\n"
         res_str += f"task->bsd_info = {printPtrAsString(self.bsd_info_ptr)}\n"
+        res_str += f"task->itk_self = {printPtrAsString(self.itk_self)}\n"
         res_str += f"task->ipc_space = {printPtrAsString(self.ipc_space)}\n"
         res_str += f"task->ipc_space->is_table = {printPtrAsString(self.ipc_space_object.is_table)}\n"
 

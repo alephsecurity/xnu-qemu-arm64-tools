@@ -37,6 +37,9 @@ class ThreadOffsets(Enum):
 class TaskOffsets(Enum):
     TASK_NEXT = 0x28
     THREAD_LST_FROM_TASK = 0x40
+    ITK_SELF = 0xD8
+    ITK_NSELF = 0xE0
+    ITK_SSELF = 0xE8
     BSD_INFO = 0x358
     IPC_SPACE = 0x300
 

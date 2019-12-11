@@ -149,7 +149,6 @@ class PrintIPCEntryList(gdb.Command):
         gdb.write("=================================================\n")
         gdb.write(IPCSpace(address).printIPCSpaceInfo())
         gdb.write("=================================================\n\n")
-
         for entry in iter(IPCEntryIterator(address)):
             gdb.write(f"{entry.printIPCEntryInfo():<47}" )
             gdb.write("-----------------------------------------------\n")
