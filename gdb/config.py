@@ -10,5 +10,6 @@ try:
     import xnu.log
     import xnu.xnu_types
     import xnu.constants
-except:
+except Exception as e:
     gdb.write("NOTE: Could not init the gdb module.\n")
+    gdb.write(f"Err: {e}\n")
