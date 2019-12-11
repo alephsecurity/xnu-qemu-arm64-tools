@@ -26,7 +26,7 @@ def executeGetString(value):
         command = f"x /1s {str(value)}"
         logger.debug(f"Going to excute {command}")
         res = gdb.execute(command,to_string=True)
-        res = res.split()[1]
+        res = " ".join(res.split()[1:])
         logger.debug(f"Got a result {str(res)}")
         return res
     except Exception:
