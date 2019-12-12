@@ -48,8 +48,8 @@ class BSDInfoOffsets(Enum):
     NAME_INBSD_INFO = 0x261
 
 class IPCSpaceOffsets(Enum):
-    IS_TABLE_SIZE = 0x18
-    IS_TABLE_FREE = 0x1C
+    IS_TABLE_SIZE = 0x14
+    IS_TABLE_FREE = 0x18
     IS_TABLE = 0x20
     IS_LOW_MOD = 0x38
     IS_HIGH_MOD = 0x3C
