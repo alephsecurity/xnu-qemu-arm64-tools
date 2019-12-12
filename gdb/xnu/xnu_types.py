@@ -1,6 +1,6 @@
 from xnu.constants import NextPcHelpOffsets ,IPCSpaceOffsets,IPCEntryOffsets,IPCObjectOffsets
-from xnu.constants import ThreadOffsets,BSDInfoOffsets, TaskOffsets, IPCPortOffsets,ThrdItrType
-from xnu.constants import  NULL_PTR, GLOBAL_THREADS_PTR, GLOBAL_TASKS_PTR, NULL_PTR_STR, IE_BITS_TYPE_MASK
+from xnu.constants import ThreadOffsets,BSDInfoOffsets, TaskOffsets, IPCPortOffsets,ThrdItrType, io_bits_types
+from xnu.constants import  NULL_PTR, GLOBAL_THREADS_PTR, GLOBAL_TASKS_PTR, NULL_PTR_STR, IE_BITS_TYPE_MASK, IO_BITS_KOTYPE
 from xnu.utils import getPointerAt,getLongAt,getIntAt,printValueOf,getStringAt,printPtrAsString
 from xnu.sys_info import getCurrentTaskPtr, getCurrentThreadPtr, isUserThread,getSymbol, isValidPtr
 import traceback
@@ -178,11 +178,12 @@ class IPCObject:
 
     def printIPCObjectInfo(self):
         res_str = ""
-        res_str += f"ip_object->io_bits {hex(self.io_bits)}\n"
+        res_str += f"ip_object->io_bits {io_bits_types[self.io_bits & IO_BITS_KOTYPE]}\n"
         res_str += f"ip_object->io_references   {hex(self.io_references)}\n"
         res_str += f"ip_object->io_lock_data[0] {hex(self.io_lock_data_1)}\n"
         res_str += f"ip_object->io_lock_data[1] {hex(self.io_lock_data_2)}\n"
         return res_str
+
 
 class IPCPort:
     def __init__(self, address):
