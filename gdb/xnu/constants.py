@@ -62,3 +62,18 @@ class IPCEntryOffsets(Enum):
 class IPCObjectOffsets(Enum):
     IO_REFS = 0x04
     IO_LOCK_DATA = 0x08
+    IP_MSG = 0x24
+
+class IPCPortOffsets(Enum):
+    IP_MSG = 0x18
+    DATA = 0x60
+    KDATA = 0x68
+    IP_NSREQ = 0x70
+    IP_PDREQ = 0x78
+    IP_REQ = 0x80
+    KDATA2 = 0x88
+    IP_CTXT = 0x90
+    IP_SPREQ = 0x98 #bitmap
+    IP_MSCNT = 0x9C
+    IP_SRIGHTS = 0xA0
+    IP_SORIGHTS = 0xA4

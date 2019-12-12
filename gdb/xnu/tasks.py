@@ -1,4 +1,4 @@
-from xnu.xnu_types import ThreadsIterator, TasksIterator,IPCEntryIterator, isTaskExist, isThreadExist, getMaxLengthProcName 
+from xnu.xnu_types import ThreadsIterator, TasksIterator,IPCEntryIterator, isTaskExist, isThreadExist, getMaxLengthProcName , IPCPort
 from xnu.xnu_types import Thread, Task, IPCEntry, IPCSpace, ThreadVoucher, getTheadInfoTitle, getMaxLengthPcName, getMaxLengthContName
 from  xnu.sys_info import isUserThread, isValidPtr
 import xnu.utils as utils
@@ -123,6 +123,21 @@ class PrintVoucherInfo(gdb.Command):
             raise gdb.GdbError(traceback.format_exc())
 PrintVoucherInfo()
 
+class PrintIPCPortInfo(gdb.Command):
+    def __init__(self):
+        super(PrintIPCPortInfo, self).__init__("xnu-ipc-port-info", gdb.COMMAND_DATA)
+    
+    def invoke(self, arg, from_tty):
+        try:
+            argv = gdb.string_to_argv(arg)
+            if len(argv) == 1 and isValidPtr(int(argv[0],0)):
+                ipc_port = int(argv[0],0)
+                gdb.write(IPCPort(ipc_port).printIPCPortInfo()+'\n')
+            else:
+                gdb.write("wrong args\n")
+        except:
+            raise gdb.GdbError(traceback.format_exc())
+PrintIPCPortInfo()
 
 class PrintIPCEntryList(gdb.Command):
     def __init__(self):

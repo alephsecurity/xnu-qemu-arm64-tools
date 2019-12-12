@@ -1,4 +1,5 @@
-from xnu.constants import ThreadOffsets,BSDInfoOffsets, TaskOffsets, ThrdItrType,NextPcHelpOffsets ,IPCSpaceOffsets,IPCEntryOffsets,IPCObjectOffsets
+from xnu.constants import NextPcHelpOffsets ,IPCSpaceOffsets,IPCEntryOffsets,IPCObjectOffsets
+from xnu.constants import ThreadOffsets,BSDInfoOffsets, TaskOffsets, IPCPortOffsets,ThrdItrType
 from xnu.constants import  NULL_PTR, GLOBAL_THREADS_PTR, GLOBAL_TASKS_PTR, NULL_PTR_STR, IE_BITS_TYPE_MASK
 from xnu.utils import getPointerAt,getLongAt,getIntAt,printValueOf,getStringAt,printPtrAsString
 from xnu.sys_info import getCurrentTaskPtr, getCurrentThreadPtr, isUserThread,getSymbol, isValidPtr
@@ -153,8 +154,7 @@ class IPCEntry:
             self.index =  getIntAt(address + IPCEntryOffsets.INDEX.value)
 
             if self.ie_object:
-                # self.ie_object_object = IPCObject(self.ie_object)
-                pass
+                self.ie_object_object = IPCObject(self.ie_object)
         else:
             raise gdb.GdbError(f"Wrong pointer to IPC Entry {address}")
 
@@ -171,15 +171,61 @@ class IPCObject:
         if address != NULL_PTR:
             self.io_bits = getIntAt(address) #parse it from ipc_object
             self.io_references = getIntAt(address + IPCObjectOffsets.IO_REFS.value)
-            self.io_lock_data = getIntAt(address + IPCObjectOffsets.IO_LOCK_DATA.value)
+            self.io_lock_data_1 = getPointerAt(address + IPCObjectOffsets.IO_LOCK_DATA.value)
+            self.io_lock_data_2 = getPointerAt(address + IPCObjectOffsets.IO_LOCK_DATA.value + 0x08) #next
         else:
             raise gdb.GdbError(f"Wrong pointer to IPC Object {address}")
 
     def printIPCObjectInfo(self):
         res_str = ""
-        res_str += f"ipc_object->io_bits {hex(self.io_bits)}"
-        res_str += f"ipc_object->io_references {hex(self.io_references)}"
-        res_str += f"ipc_object->io_lock_data {hex(self.io_lock_data)}"
+        res_str += f"ip_object->io_bits {hex(self.io_bits)}\n"
+        res_str += f"ip_object->io_references   {hex(self.io_references)}\n"
+        res_str += f"ip_object->io_lock_data[0] {hex(self.io_lock_data_1)}\n"
+        res_str += f"ip_object->io_lock_data[1] {hex(self.io_lock_data_2)}\n"
+        return res_str
+
+class IPCPort:
+    def __init__(self, address):
+        if address != NULL_PTR:
+            self.ip_object_object = IPCObject(address)
+            self.ip_messages = getPointerAt(address + IPCPortOffsets.IP_MSG.value)
+            self.data = getPointerAt(address + IPCPortOffsets.DATA.value)
+            self.kdata = getPointerAt(address + IPCPortOffsets.KDATA.value)
+            self.kdata2 = getPointerAt(address + IPCPortOffsets.KDATA2.value)
+            self.ip_context = getPointerAt(address + IPCPortOffsets.IP_CTXT.value)
+            self.ip_sprequests = (getIntAt(address + IPCPortOffsets.IP_SPREQ.value)  & (1<<0))
+            self.ip_spimportant = (getIntAt(address + IPCPortOffsets.IP_SPREQ.value) & (1<<1))
+            self.ip_impdonation = (getIntAt(address + IPCPortOffsets.IP_SPREQ.value) & (1<<2))
+            self.ip_tempowner = (getIntAt(address + IPCPortOffsets.IP_SPREQ.value) & (1<<3))
+            self.ip_guarded = (getIntAt(address + IPCPortOffsets.IP_SPREQ.value) & (1<<4))
+            self.ip_strict_guard = (getIntAt(address + IPCPortOffsets.IP_SPREQ.value) & (1<<5))
+            self.ip_specialreply = (getIntAt(address + IPCPortOffsets.IP_SPREQ.value) & (1<<6))
+            self.ip_sync_link_state = (getIntAt(address + IPCPortOffsets.IP_SPREQ.value) & (0x000001ff))
+            self.ip_impcount = (getPointerAt(address + IPCPortOffsets.IP_SPREQ.value) & (0xfffffe00))
+            self.ip_mscount = getPointerAt(address + IPCPortOffsets.IP_MSCNT.value)
+            self.ip_srights = getPointerAt(address + IPCPortOffsets.IP_SRIGHTS.value)
+            self.ip_sorights = getPointerAt(address + IPCPortOffsets.IP_SORIGHTS.value)
+    
+    def printIPCPortInfo(self):
+        res_str = ""
+        res_str += self.ip_object_object.printIPCObjectInfo()
+        res_str += f"ipc_port->ip_messages       {self.ip_messages }\n"
+        res_str += f"ipc_port->data       {printPtrAsString(self.data) }\n"
+        res_str += f"ipc_port->kdata       {printPtrAsString(self.kdata) }\n"
+        res_str += f"ipc_port->kdata2       {printPtrAsString(self.kdata2 )}\n"
+        res_str += f"ipc_port->ip_context       {self.ip_context }\n"
+        res_str += f"ipc_port->ip_sprequests       {self.ip_sprequests }\n"
+        res_str += f"ipc_port->ip_spimportant       {self.ip_spimportant }\n"
+        res_str += f"ipc_port->ip_impdonation       {self.ip_impdonation }\n"
+        res_str += f"ipc_port->ip_tempowner       {self.ip_tempowner }\n"
+        res_str += f"ipc_port->ip_guarded       {self.ip_guarded }\n"
+        res_str += f"ipc_port->ip_strict_guard       {self.ip_strict_guard }\n"
+        res_str += f"ipc_port->ip_specialreply       {self.ip_specialreply }\n"
+        res_str += f"ipc_port->ip_sync_link_state       {self.ip_sync_link_state }\n"
+        res_str += f"ipc_port->ip_impcount       {self.ip_impcount }\n"
+        res_str += f"ipc_port->ip_mscount       {self.ip_mscount }\n"
+        res_str += f"ipc_port->ip_srights       {self.ip_srights }\n"
+        res_str += f"ipc_port->ip_sorights       {self.ip_sorights }\n"
         return res_str
 
 #TASK
