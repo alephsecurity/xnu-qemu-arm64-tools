@@ -12,5 +12,6 @@ try:
     import xnu.log
     import xnu.xnu_types
     import xnu.constants
-except:
-    gdb.write(f"NOTE: Could not init the gdb module: {traceback.format_exc()}\n")
+except Exception:
+    gdb.write(
+        f"NOTE: Could not init the gdb module: {traceback.format_exc()}\n")

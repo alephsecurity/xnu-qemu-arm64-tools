@@ -1,12 +1,13 @@
 from xnu.constants import CURRENT_THREAD, NULL_PTR, ThreadOffsets
-from xnu.utils import printValueOf,getPointerAt
-import gdb 
+from xnu.utils import printValueOf, getPointerAt
+import gdb
 import json
 import os
 
 sym_dict = {}
 foundFuctName_dict = {}
 SYMDIRPATH = os.path.dirname(__file__)
+
 
 def getCurrentTaskPtr():
     try:
@@ -15,15 +16,19 @@ def getCurrentTaskPtr():
     except Exception:
         raise gdb.GdbError(f"Error occured, maybe in user land?")
 
+
 def getCurrentThreadPtr():
     try:
         return printValueOf(CURRENT_THREAD)
     except Exception:
         raise gdb.GdbError(f"Error occured, maybe in user land?")
 
-#TODO put into thread class
+# TODO put into thread class
+
+
 def isUserThread(thread):
     return True if thread.uContextData != NULL_PTR else False
+
 
 def isValidPtr(ptr):
     try:
@@ -36,14 +41,16 @@ def isValidPtr(ptr):
 def loadSymbols():
     global sym_dict
     global foundFuctName_dict
-    with open(os.path.join(SYMDIRPATH,"SymbolsNew"),"r") as sym_file:
+    with open(os.path.join(SYMDIRPATH, "SymbolsNew"), "r") as sym_file:
         sym_dict = json.load(sym_file)
-    with open(os.path.join(SYMDIRPATH,"KnownLables"),"r") as oundFuctName_file:
+    with open(os.path.join(SYMDIRPATH, "KnownLables"), "r") as oundFuctName_file:
         foundFuctName_dict = json.load(oundFuctName_file)
 
     # gdb.write("Symbols loaded\n")
 
+
 loadSymbols()
+
 
 def getSymbol(addrr):
     if addrr in sym_dict:

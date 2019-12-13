@@ -1,13 +1,14 @@
 import xnu.utils as utils
 import gdb
 
+
 class StructZone(object):
     zone_globals_16B92 = {
         "max_zones": 0xfffffff00763df48,
         "zone_array": 0xfffffff007624ef0,
         "zone_struct_size": 0x140
     }
-    #TODO: support more versions
+    # TODO: support more versions
     globs = zone_globals_16B92
 
     struct_offsets_16B92 = {
@@ -23,15 +24,16 @@ class StructZone(object):
         "max_size": 0xe8,
         "cur_size": 0xe0
     }
+
     def __init__(self, addr):
-        #TODO: support more versions
+        # TODO: support more versions
         self.offsets = StructZone.struct_offsets_16B92
         self.globals = StructZone.zone_globals_16B92
         self.addr = addr
         self.cur_size = utils.getLongAt(addr + self.offsets["cur_size"])
         self.max_size = utils.getLongAt(addr + self.offsets["max_size"])
         self.elem_size = utils.getLongAt(addr + self.offsets["elem_size"])
-        self.alloc_size =  utils.getLongAt(addr + self.offsets["alloc_size"])
+        self.alloc_size = utils.getLongAt(addr + self.offsets["alloc_size"])
         self.page_count = utils.getLongAt(addr + self.offsets["page_count"])
         self.sum_count = utils.getLongAt(addr + self.offsets["sum_count"])
         self.flags = utils.getIntAt(addr + self.offsets["flags"])
@@ -57,6 +59,7 @@ class StructZone(object):
     def get_struct_size(cls):
         return cls.globs["zone_struct_size"]
 
+
 class PrintZoneInformationCommand(gdb.Command):
     def __init__(self):
         super(PrintZoneInformationCommand,
@@ -80,15 +83,16 @@ class PrintZoneInformationCommand(gdb.Command):
             if (not zone.is_valid()):
                 continue
             out = f"Valid zone at 0x{zone_addr:016x} at index {i}\n"
-            out+= f"        zone_name: {zone.zone_name}\n"
-            out+= f"        elem_size: {zone.elem_size}\n"
-            out+= f"        index: {zone.index}\n"
-            out+= f"        flags: 0x{zone.flags:08x}\n"
-            out+= f"        sum_count: {zone.sum_count}\n"
-            out+= f"        page_count: {zone.page_count}\n"
-            out+= f"        alloc_size: 0x{zone.alloc_size:016x}\n"
-            out+= f"        max_size: 0x{zone.max_size:016x}\n"
-            out+= f"        cur_size: 0x{zone.cur_size:016x}\n"
+            out += f"        zone_name: {zone.zone_name}\n"
+            out += f"        elem_size: {zone.elem_size}\n"
+            out += f"        index: {zone.index}\n"
+            out += f"        flags: 0x{zone.flags:08x}\n"
+            out += f"        sum_count: {zone.sum_count}\n"
+            out += f"        page_count: {zone.page_count}\n"
+            out += f"        alloc_size: 0x{zone.alloc_size:016x}\n"
+            out += f"        max_size: 0x{zone.max_size:016x}\n"
+            out += f"        cur_size: 0x{zone.cur_size:016x}\n"
             gdb.write(out)
+
 
 PrintZoneInformationCommand()

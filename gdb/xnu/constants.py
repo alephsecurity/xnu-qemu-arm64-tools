@@ -10,6 +10,7 @@ IE_BITS_TYPE_MASK = 0x001f0000
 
 IO_BITS_KOTYPE = 0x00000fff
 
+
 class NextPcHelpOffsets(Enum):
     NEXT_IN_THREAD_RUN = 0xfffffff0070e7d0c
     NEXT_IN_THREAD_BLOCK = 0xfffffff0070e3554
@@ -24,6 +25,7 @@ class ThrdItrType(Enum):
     GLOBAL = 0
     TASK = 1
 
+
 class ThreadOffsets(Enum):
     CONTINUATION = 0x80
     CURRENT_STATE = 0xa0
@@ -36,6 +38,7 @@ class ThreadOffsets(Enum):
     VOUCHER_PTR = 0x510
     VOUCHER_NAME = 0x50C
 
+
 class TaskOffsets(Enum):
     TASK_NEXT = 0x28
     THREAD_LST_FROM_TASK = 0x40
@@ -45,9 +48,11 @@ class TaskOffsets(Enum):
     BSD_INFO = 0x358
     IPC_SPACE = 0x300
 
+
 class BSDInfoOffsets(Enum):
     PID_IN_BSD_INFO = 0x60
     NAME_INBSD_INFO = 0x261
+
 
 class IPCSpaceOffsets(Enum):
     IS_TABLE_SIZE = 0x14
@@ -56,15 +61,18 @@ class IPCSpaceOffsets(Enum):
     IS_LOW_MOD = 0x38
     IS_HIGH_MOD = 0x3C
 
+
 class IPCEntryOffsets(Enum):
     IE_BITS = 0x08
     IE_INDEX = 0x0C
     INDEX = 0x10
 
+
 class IPCObjectOffsets(Enum):
     IO_REFS = 0x04
     IO_LOCK_DATA = 0x08
     IP_MSG = 0x24
+
 
 class IPCPortOffsets(Enum):
     IP_MSG = 0x18
@@ -75,10 +83,11 @@ class IPCPortOffsets(Enum):
     IP_REQ = 0x80
     KDATA2 = 0x88
     IP_CTXT = 0x90
-    IP_SPREQ = 0x98 #bitmap
+    IP_SPREQ = 0x98  # bitmap
     IP_MSCNT = 0x9C
     IP_SRIGHTS = 0xA0
     IP_SORIGHTS = 0xA4
+
 
 io_bits_types = [
     "IKOT_NONE",
