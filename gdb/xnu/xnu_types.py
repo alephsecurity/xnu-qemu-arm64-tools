@@ -114,27 +114,27 @@ class Thread:
             if self.next_pc != NULL_PTR else ""
         res_str += f"thread->task                           {print_ptr_as_string(self.task_ptr)}\n"
         if self.task_object:
-            res_str += f"thread->task->bsd_info                 \
+            res_str += f"thread->task->bsd_info\
                 {print_ptr_as_string(self.task_object.bsd_info_ptr)}\n"
         if self.task_object.bsd_info_ptr:
-            res_str += f"thread->task->bsd_info->bsd_name       \
+            res_str += f"thread->task->bsd_info->bsd_name\
                 {self.task_object.bsdinfo_object.bsd_name}\n"
-            res_str += f"thread->task->bsd_info->bsd_pid       \
+            res_str += f"thread->task->bsd_info->bsd_pid\
                 {print_ptr_as_string(self.task_object.bsdinfo_object.bsd_pid)}\n"
         res_str += f"thread->tid                            {str(self.tid)}\n"
-        res_str += f"thread->continuation                   \
+        res_str += f"thread->continuation\
             {print_ptr_as_string(self.continuation)}\n"
-        res_str += f"thread->ucontext_data                   \
+        res_str += f"thread->ucontext_data\
             {print_ptr_as_string(self.ucontext_data)}\n"
         if self.ucontext_data:
             saved_state = ThreadSavedState(self.ucontext_data)
             res_str += saved_state.print_saved_state("thread->ucontext_data")
-        res_str += f"thread->kstackptr                      \
+        res_str += f"thread->kstackptr\
             {print_ptr_as_string(self.kernel_stack_ptr)}\n"
         if self.kernel_stack_ptr:
             saved_state = ThreadSavedState(self.kernel_stack_ptr)
             res_str += saved_state.print_saved_state("thread->kstackptr")
-        res_str += f"thread->voucher_ptr                    \
+        res_str += f"thread->voucher_ptr\
             {print_ptr_as_string(self.voucher_ptr)}\n"
 
         return res_str
