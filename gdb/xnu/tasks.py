@@ -65,7 +65,7 @@ class PrintTaskList(gdb.Command):
         for task in iter(TasksIterator()):
             counter += 1
             gdb.write(task.printTaskInfoShort()+'\n')
-        gdb.write(f"TOTAL {counter}\n")
+        gdb.write(f"TOTALLL {counter}\n")
 
 
 PrintTaskList()
