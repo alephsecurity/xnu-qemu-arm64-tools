@@ -1,61 +1,61 @@
-from xnu.constants import CURRENT_THREAD, NULL_PTR, ThreadOffsets
-from xnu.utils import printValueOf, getPointerAt
-import gdb
 import json
 import os
+from xnu.constants import CURRENT_THREAD, NULL_PTR, ThreadOffsets
+from xnu.utils import print_val, get_8_byte_at
+import gdb
 
-sym_dict = {}
-foundFuctName_dict = {}
-SYMDIRPATH = os.path.dirname(__file__)
 
-
-def getCurrentTaskPtr():
+def get_current_task_ptr():
     try:
-        address = printValueOf(CURRENT_THREAD)
-        return getPointerAt(address + ThreadOffsets.TASK.value)
+        address = print_val(CURRENT_THREAD)
+        return get_8_byte_at(address + ThreadOffsets.TASK.value)
     except Exception:
         raise gdb.GdbError(f"Error occured, maybe in user land?")
 
 
-def getCurrentThreadPtr():
+def get_current_thread_ptr():
     try:
-        return printValueOf(CURRENT_THREAD)
+        return print_val(CURRENT_THREAD)
     except Exception:
         raise gdb.GdbError(f"Error occured, maybe in user land?")
 
 # TODO put into thread class
+def is_user_thread(thread):
+    return True if thread.ucontext_data != NULL_PTR else False
 
 
-def isUserThread(thread):
-    return True if thread.uContextData != NULL_PTR else False
-
-
-def isValidPtr(ptr):
+def is_valid_ptr(ptr):
     try:
-        getPointerAt(ptr)
+        get_8_byte_at(ptr)
         return True
     except:
         raise gdb.GdbError(f"Wrong pointer! {hex(ptr)}")
 
 
-def loadSymbols():
-    global sym_dict
-    global foundFuctName_dict
-    with open(os.path.join(SYMDIRPATH, "SymbolsNew"), "r") as sym_file:
-        sym_dict = json.load(sym_file)
-    with open(os.path.join(SYMDIRPATH, "KnownLables"), "r") as oundFuctName_file:
-        foundFuctName_dict = json.load(oundFuctName_file)
+class Symbols:
+    def __init__(self):
+        self.sym_dict = {}
+        self.found_fuct_name_dict = {}
+        self.sym_dir_path = os.path.dirname(__file__)
+        self.load_symbols()
 
-    # gdb.write("Symbols loaded\n")
+    def load_symbols(self):
+        with open(os.path.join(self.sym_dir_path, "SymbolsNew"), "r") as sym_file:
+            self.sym_dict = json.load(sym_file)
+        with open(os.path.join(self.sym_dir_path, "KnownLables"), "r") as known_func_name_file:
+            self.found_fuct_name_dict = json.load(known_func_name_file)
+
+    def get_symbol_internal(self, addrr):
+        if addrr in self.sym_dict:
+            if 'FUN_' not in self.sym_dict[addrr]:
+                return self.sym_dict[addrr]
+        if addrr in self.found_fuct_name_dict:
+            return self.found_fuct_name_dict[addrr]
+        return addrr
 
 
-loadSymbols()
+SYMBOLS = Symbols()
 
 
-def getSymbol(addrr):
-    if addrr in sym_dict:
-        if 'FUN_' not in sym_dict[addrr]:
-            return sym_dict[addrr]
-    if addrr in foundFuctName_dict:
-        return foundFuctName_dict[addrr]
-    return addrr
+def get_symbol(addrr):
+    return SYMBOLS.get_symbol_internal(addrr)

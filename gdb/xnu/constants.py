@@ -89,7 +89,7 @@ class IPCPortOffsets(Enum):
     IP_SORIGHTS = 0xA4
 
 
-io_bits_types = [
+IO_BITS_TYPES = [
     "IKOT_NONE",
     "IKOT_THREAD",
     "IKOT_TASK",

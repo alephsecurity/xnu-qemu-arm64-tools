@@ -7,12 +7,13 @@ import logging
 sys.path.insert(0, os.path.dirname(os.path.expanduser(__file__)))
 logging.getLogger("xnu").setLevel(logging.WARNING)
 MODULES_TO_IPMORT = [
-    "xnu.zone",
-    "xnu.tasks",
+    "xnu.constants",
     "xnu.utils",
     "xnu.sys_info",
+    "xnu.zone",
     "xnu.xnu_types",
-    "xnu.constants"]
+    "xnu.tasks",
+    ]
 
 try:
     for module in MODULES_TO_IPMORT:
@@ -21,6 +22,6 @@ try:
         else:
             importlib.reload(importlib.import_module(module))
 
-except Exception:
+except Exception as error:
     gdb.write(
-        f"NOTE: Could not init the gdb module: {traceback.format_exc()}\n")
+        f"NOTE: Could not init the gdb module: {error} {traceback.format_exc()}\n")

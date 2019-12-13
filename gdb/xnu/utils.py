@@ -1,30 +1,24 @@
 import traceback
-import  logging
+import logging
 import gdb
 from xnu.constants import NULL_PTR_STR
 
 LOGGER = logging.getLogger("xnu")
 
-def getPointerAt(addr):
-    return executeGetVal(addr, 'g')
+
+def get_8_byte_at(addr):
+    return execute_get_val(addr, 'g')
 
 
-def getLongAt(addr):
-    return executeGetVal(addr, 'g')
+def get_4_byte_at(addr):
+    return execute_get_val(addr, 'w')
 
 
-def getIntAt(addr):
-    return executeGetVal(addr, 'w')
+def get_string_at(value):
+    return execute_get_string(value)
 
 
-def printValueOf(value):
-    return printVal(value)
-
-
-def getStringAt(value):
-    return executeGetString(value)
-
-def executeGetString(value):
+def execute_get_string(value):
     try:
         command = f"x /1s {str(value)}"
         LOGGER.debug("Going to excute %s ", command)
@@ -36,9 +30,9 @@ def executeGetString(value):
         raise gdb.GdbError(traceback.format_exc())
 
 
-def executeGetVal(val, size):
+def execute_get_val(val, size):
     try:
-        checkArguments(size)
+        check_arguments(size)
         command = f"x /1x{size} {hex(val)}"
         LOGGER.debug("Going to excute %s ", command)
         res = gdb.execute(command, to_string=True)
@@ -49,7 +43,7 @@ def executeGetVal(val, size):
         raise gdb.GdbError(f"{traceback.format_exc()}")
 
 
-def printVal(var):
+def print_val(var):
     try:
         command = f"print /1x {str(var)}"
         LOGGER.debug("Going to excute %s ", command)
@@ -61,14 +55,9 @@ def printVal(var):
         raise gdb.GdbError(traceback.format_exc())
 
 
-def checkArguments(size):
+def check_arguments(size):
     return size in ['b', 'h', 'w', 'g']
 
-
-def printInfo(val):
-    attrs = vars(val)
-    gdb.write('\n'.join("%s: %s" % item for item in attrs.items()))
-
-
-def printPtrAsString(addr):
+#TODO add padding
+def print_ptr_as_string(addr):
     return NULL_PTR_STR if not addr else hex(addr)

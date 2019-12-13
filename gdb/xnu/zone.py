@@ -30,16 +30,16 @@ class StructZone(object):
         self.offsets = StructZone.struct_offsets_16B92
         self.globals = StructZone.zone_globals_16B92
         self.addr = addr
-        self.cur_size = utils.getLongAt(addr + self.offsets["cur_size"])
-        self.max_size = utils.getLongAt(addr + self.offsets["max_size"])
-        self.elem_size = utils.getLongAt(addr + self.offsets["elem_size"])
-        self.alloc_size = utils.getLongAt(addr + self.offsets["alloc_size"])
-        self.page_count = utils.getLongAt(addr + self.offsets["page_count"])
-        self.sum_count = utils.getLongAt(addr + self.offsets["sum_count"])
-        self.flags = utils.getIntAt(addr + self.offsets["flags"])
-        self.index = utils.getIntAt(addr + self.offsets["index"])
-        name_ptr = utils.getLongAt(addr + self.offsets["zone_name"])
-        self.zone_name = utils.getStringAt(name_ptr)
+        self.cur_size = utils.get_8_byte_at(addr + self.offsets["cur_size"])
+        self.max_size = utils.get_8_byte_at(addr + self.offsets["max_size"])
+        self.elem_size = utils.get_8_byte_at(addr + self.offsets["elem_size"])
+        self.alloc_size = utils.get_8_byte_at(addr + self.offsets["alloc_size"])
+        self.page_count = utils.get_8_byte_at(addr + self.offsets["page_count"])
+        self.sum_count = utils.get_8_byte_at(addr + self.offsets["sum_count"])
+        self.flags = utils.get_4_byte_at(addr + self.offsets["flags"])
+        self.index = utils.get_4_byte_at(addr + self.offsets["index"])
+        name_ptr = utils.get_8_byte_at(addr + self.offsets["zone_name"])
+        self.zone_name = utils.get_string_at(name_ptr)
 
     def is_valid(self):
         shift = self.offsets["flags_valid_shift"]
@@ -71,7 +71,7 @@ class PrintZoneInformationCommand(gdb.Command):
     def print_zones(self):
         zone_arr_addr = StructZone.get_zone_array()
         max_zones_addr = StructZone.get_max_zones()
-        max_zones = utils.getIntAt(max_zones_addr)
+        max_zones = utils.get_4_byte_at(max_zones_addr)
         struct_size = StructZone.get_struct_size()
         out = "Printing zones info:\n"
         out += f"zone_arr_addr: 0x{zone_arr_addr:016x}\n"
