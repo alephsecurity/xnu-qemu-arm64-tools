@@ -1,7 +1,6 @@
 import traceback
-from xnu.xnu_types import ThreadsIterator, TasksIterator, IPCEntryIterator, is_task_exist, is_thread_exist, get_max_length_proc_name, IPCPort
-from xnu.xnu_types import Thread, Task, IPCSpace, ThreadVoucher, get_thead_info_title, get_max_length_pc_name, get_max_length_cont_name
-from xnu.sys_info import is_user_thread, is_valid_ptr
+import xnu.xnu_types as types
+import xnu.sys_info as sys_info
 import gdb
 
 
@@ -22,7 +21,7 @@ class PrintThreadList(gdb.Command):
                 else:
                     try:
                         requested_task = int(argv[0], 0)
-                        if is_task_exist(requested_task):  # May be not safe...
+                        if types.is_task_exist(requested_task):  # May be not safe...
                             self.print_all_threads(task=requested_task)
                     except Exception:
                         gdb.GdbError(gdb.GdbError("wrong args"))
@@ -33,13 +32,13 @@ class PrintThreadList(gdb.Command):
 
     def print_all_threads(self, user_only=False, is_global=False, task=None):
         counter = 0
-        max_length_proc = get_max_length_proc_name()
-        max_length_cont = get_max_length_cont_name()
-        max_length_pc = get_max_length_pc_name()
+        max_length_proc = types.get_max_length_proc_name()
+        max_length_cont = types.get_max_length_cont_name()
+        max_length_pc = types.get_max_length_pc_name()
         gdb.write(
-            get_thead_info_title(max_length_proc, max_length_cont, max_length_pc)+'\n')
-        for thread in iter(ThreadsIterator(is_global, task)):
-            if user_only is False or is_user_thread(thread):
+            types.get_thead_info_title(max_length_proc, max_length_cont, max_length_pc)+'\n')
+        for thread in iter(types.ThreadsIterator(is_global, task)):
+            if user_only is False or sys_info.is_user_thread(thread):
                 counter += 1
                 gdb.write(thread.print_thead_info_short(
                     max_length_proc, max_length_cont, max_length_pc)+'\n')
@@ -61,7 +60,7 @@ class PrintTaskList(gdb.Command):
 
     def print_all_tasks(self):
         counter = 0
-        for task in iter(TasksIterator()):
+        for task in iter(types.TasksIterator()):
             counter += 1
             gdb.write(task.print_task_info_short()+'\n')
         gdb.write(f"TOTAL {counter}\n")
@@ -179,9 +178,9 @@ class PrintIPCEntryList(gdb.Command):
 
     def print_all_tasks(self, address):
         gdb.write("=================================================\n")
-        gdb.write(IPCSpace(address).print_ipc_space_info())
+        gdb.write(types.IPCSpace(address).print_ipc_space_info())
         gdb.write("=================================================\n\n")
-        for entry in iter(IPCEntryIterator(address)):
+        for entry in iter(types.IPCEntryIterator(address)):
             gdb.write(f"{entry.print_ipc_entry_info():<47}")
             gdb.write("-----------------------------------------------\n")
 

@@ -1,32 +1,32 @@
 import json
 import os
-from xnu.constants import CURRENT_THREAD, NULL_PTR, ThreadOffsets
-from xnu.utils import print_val, get_8_byte_at
+import xnu.constants as const
+import xnu.utils as utils
 import gdb
 
 
 def get_current_task_ptr():
     try:
-        address = print_val(CURRENT_THREAD)
-        return get_8_byte_at(address + ThreadOffsets.TASK.value)
+        address = utils.print_val(const.CURRENT_THREAD)
+        return utils.get_8_byte_at(address + const.ThreadOffsets.TASK.value)
     except Exception:
         raise gdb.GdbError(f"Error occured, maybe in user land?")
 
 
 def get_current_thread_ptr():
     try:
-        return print_val(CURRENT_THREAD)
+        return utils.print_val(const.CURRENT_THREAD)
     except Exception:
         raise gdb.GdbError(f"Error occured, maybe in user land?")
 
 # TODO put into thread class
 def is_user_thread(thread):
-    return True if thread.ucontext_data != NULL_PTR else False
+    return True if thread.ucontext_data != const.NULL_PTR else False
 
 
 def is_valid_ptr(ptr):
     try:
-        get_8_byte_at(ptr)
+        utils.get_8_byte_at(ptr)
         return True
     except:
         raise gdb.GdbError(f"Wrong pointer! {hex(ptr)}")
