@@ -58,6 +58,6 @@ def print_val(var):
 def check_arguments(size):
     return size in ['b', 'h', 'w', 'g']
 
-#TODO add padding
+
 def print_ptr_as_string(addr):
-    return NULL_PTR_STR if not addr else hex(addr)
+    return NULL_PTR_STR if not addr else f"0x{addr:016x}"
