@@ -434,7 +434,7 @@ class IPCEntryIterator:
             self.size = IPCSpace(address).is_table_size 
             self.index = 0
         else:
-            raise gdb.GdbError(f"Worng ipc_entry poiner {address}")
+            raise gdb.GdbError(f"Wrong ipc_entry pointer {address}")
     def __iter__(self):
         return self
     def __next__(self):
