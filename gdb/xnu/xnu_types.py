@@ -4,13 +4,15 @@ import xnu.sys_info as sys_info
 import gdb
 
 
-# THREAD
+# thread
 class Thread:
     def __init__(self, address):
         if address != const.NULL_PTR:
             self.address = address
-            self.task_ptr = utils.get_8_byte_at(address + const.ThreadOffsets.TASK.value)
-            self.tid = utils.get_8_byte_at(address + const.ThreadOffsets.THREAD_ID.value)
+            self.task_ptr = utils.get_8_byte_at(
+                address + const.ThreadOffsets.TASK.value)
+            self.tid = utils.get_8_byte_at(
+                address + const.ThreadOffsets.THREAD_ID.value)
             self.continuation = utils.get_8_byte_at(
                 address + const.ThreadOffsets.CONTINUATION.value)
             self.global_threads_ptr = address + const.ThreadOffsets.GLOBAL_THREADS.value
@@ -145,7 +147,7 @@ class Thread:
         return self.address == sys_info.get_current_thread_ptr()
 
 
-# BSD_INFO
+# proc
 class BsdInfo:
     def __init__(self, address):
         if address != const.NULL_PTR:
@@ -156,9 +158,9 @@ class BsdInfo:
         else:
             raise gdb.GdbError(f"Null pointer in {__name__}")
 
+
+
 # ipc_space
-
-
 class IPCSpace:
     def __init__(self, address):
         if address != const.NULL_PTR:
@@ -188,7 +190,8 @@ class IPCEntry:
                 address + const.IPCEntryOffsets.IE_BITS.value)
             self.ie_index = utils.get_4_byte_at(
                 address + const.IPCEntryOffsets.IE_INDEX.value)
-            self.index = utils.get_4_byte_at(address + const.IPCEntryOffsets.INDEX.value)
+            self.index = utils.get_4_byte_at(
+                address + const.IPCEntryOffsets.INDEX.value)
 
             if self.ie_object:
                 self.ie_object_object = IPCObject(self.ie_object)
@@ -207,7 +210,8 @@ class IPCEntry:
 class IPCObject:
     def __init__(self, address):
         if address != const.NULL_PTR:
-            self.io_bits = utils.get_4_byte_at(address)  # parse it from ipc_object
+            self.io_bits = utils.get_4_byte_at(
+                address)  # parse it from ipc_object
             self.io_references = utils.get_4_byte_at(
                 address + const.IPCObjectOffsets.IO_REFS.value)
             self.io_lock_data_1 = utils.get_8_byte_at(
@@ -233,9 +237,12 @@ class IPCPort:
             self.ip_object_object = IPCObject(address)
             self.ip_messages = utils.get_8_byte_at(
                 address + const.IPCPortOffsets.IP_MSG.value)
-            self.data = utils.get_8_byte_at(address + const.IPCPortOffsets.DATA.value)
-            self.kdata = utils.get_8_byte_at(address + const.IPCPortOffsets.KDATA.value)
-            self.kdata2 = utils.get_8_byte_at(address + const.IPCPortOffsets.KDATA2.value)
+            self.data = utils.get_8_byte_at(
+                address + const.IPCPortOffsets.DATA.value)
+            self.kdata = utils.get_8_byte_at(
+                address + const.IPCPortOffsets.KDATA.value)
+            self.kdata2 = utils.get_8_byte_at(
+                address + const.IPCPortOffsets.KDATA2.value)
             self.ip_context = utils.get_8_byte_at(
                 address + const.IPCPortOffsets.IP_CTXT.value)
             self.ip_sprequests = (
@@ -285,8 +292,6 @@ class IPCPort:
         res_str += f"ipc_port->ip_sorights       {self.ip_sorights }\n"
         return res_str
 
-# TASK
-
 
 class Task:
     def __init__(self, address):
@@ -296,7 +301,8 @@ class Task:
             self.threads_lst_ptr = address + const.TaskOffsets.THREAD_LST_FROM_TASK.value
             self.bsd_info_ptr = utils.get_8_byte_at(
                 address + const.TaskOffsets.BSD_INFO.value)
-            self.itk_self = utils.get_8_byte_at(address + const.TaskOffsets.ITK_SELF.value)
+            self.itk_self = utils.get_8_byte_at(
+                address + const.TaskOffsets.ITK_SELF.value)
             self.ipc_space = utils.get_8_byte_at(
                 address + const.TaskOffsets.IPC_SPACE.value)
 
@@ -459,12 +465,15 @@ class ThreadsIterator:
 
     def __iter__(self):
         if self.type == const.ThrdItrType.GLOBAL:
-            self.next_thread_ptr = utils.get_8_byte_at(const.GLOBAL_THREADS_PTR)
+            self.next_thread_ptr = utils.get_8_byte_at(
+                const.GLOBAL_THREADS_PTR)
             self.stop_contition = const.GLOBAL_THREADS_PTR
         else:
             relevant_task = Task(self.task_ptr)
-            self.next_thread_ptr = utils.get_8_byte_at(relevant_task.threads_lst_ptr)
-            self.stop_contition = self.task_ptr + const.TaskOffsets.THREAD_LST_FROM_TASK.value
+            self.next_thread_ptr = utils.get_8_byte_at(
+                relevant_task.threads_lst_ptr)
+            self.stop_contition = self.task_ptr + \
+                const.TaskOffsets.THREAD_LST_FROM_TASK.value
         return self
 
     def __next__(self):
@@ -552,7 +561,8 @@ def get_max_length_pc_name():
     max_length = 0
     for thread in iter(ThreadsIterator(True)):
         if len(sys_info.get_symbol(utils.print_ptr_as_string(thread.next_pc))) > max_length:
-            max_length = len(sys_info.get_symbol(utils.print_ptr_as_string(thread.next_pc)))
+            max_length = len(sys_info.get_symbol(
+                utils.print_ptr_as_string(thread.next_pc)))
     return max_length
 
 

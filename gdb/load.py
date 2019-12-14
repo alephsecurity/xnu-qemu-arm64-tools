@@ -1,3 +1,8 @@
+"""
+We want  to change  the code while still in gdb session. Pyhton wont import already loaded
+module. Taht is why we use reload module function. Please note that the ipmorts are not circular
+and their order in MODULES_TO_IPMORT matters.
+"""
 import os
 import sys
 import traceback

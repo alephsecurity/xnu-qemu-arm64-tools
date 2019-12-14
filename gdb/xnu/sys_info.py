@@ -33,6 +33,9 @@ def is_valid_ptr(ptr):
 
 
 class Symbols:
+    """ until implemented in the gdb itself
+    symbols are taken from files manually exported from ghidra and jtool2
+    """
     def __init__(self):
         self.sym_dict = {}
         self.found_fuct_name_dict = {}

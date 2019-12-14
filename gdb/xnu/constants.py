@@ -1,3 +1,7 @@
+"""
+Here defined all constants, serving all mudules.
+"""
+
 from enum import Enum
 
 GLOBAL_THREADS_PTR = 0xfffffff00760f9e0
@@ -12,6 +16,7 @@ IO_BITS_KOTYPE = 0x00000fff
 
 
 class NextPcHelpOffsets(Enum):
+    """ Info taken by reversing the 16B92 kernel version """
     NEXT_IN_THREAD_RUN = 0xfffffff0070e7d0c
     NEXT_IN_THREAD_BLOCK = 0xfffffff0070e3554
     EXEPTION_RETURN_PTR = 0xfffffff0070a1800
@@ -22,11 +27,16 @@ class NextPcHelpOffsets(Enum):
 
 
 class ThrdItrType(Enum):
+    """ Info taken by reversing the 16B92 kernel version """
     GLOBAL = 0
     TASK = 1
 
 
 class ThreadOffsets(Enum):
+    """
+    What had been parsed of thread struct
+    xnu kernel ref: darwin-xnu/osfmk/kern/thread.h (thread)
+    """
     CONTINUATION = 0x80
     CURRENT_STATE = 0xa0
     THREAD_ID = 0x3e0
@@ -40,6 +50,10 @@ class ThreadOffsets(Enum):
 
 
 class TaskOffsets(Enum):
+    """
+    What had been parsed of task struct
+    xnu kernel ref: darwin-xnu/osfmk/kern/task.h (task)
+    """
     TASK_NEXT = 0x28
     THREAD_LST_FROM_TASK = 0x40
     ITK_SELF = 0xD8
@@ -50,11 +64,13 @@ class TaskOffsets(Enum):
 
 
 class BSDInfoOffsets(Enum):
+    """ xnu kernel ref: darwin-xnu/bsd/sys/proc_internal.h (proc) """
     PID_IN_BSD_INFO = 0x60
     NAME_INBSD_INFO = 0x261
 
 
 class IPCSpaceOffsets(Enum):
+    """ xnu kernel ref: darwin-xnu/osfmk/ipc/ipc_space.h (ipc_space) """
     IS_TABLE_SIZE = 0x14
     IS_TABLE_FREE = 0x18
     IS_TABLE = 0x20
@@ -63,18 +79,21 @@ class IPCSpaceOffsets(Enum):
 
 
 class IPCEntryOffsets(Enum):
+    """ xnu kernel ref: darwin-xnu/osfmk/ipc/ipc_entry.h (ipc_entry) """
     IE_BITS = 0x08
     IE_INDEX = 0x0C
     INDEX = 0x10
 
 
 class IPCObjectOffsets(Enum):
+    """ xnu kernel ref: darwin-xnu/osfmk/ipc/ipc_object.h (ipc_object) """
     IO_REFS = 0x04
     IO_LOCK_DATA = 0x08
     IP_MSG = 0x24
 
 
 class IPCPortOffsets(Enum):
+    """ xnu kernel ref: darwin-xnu/osfmk/ipc/ipc_port.h (ipc_port) """
     IP_MSG = 0x18
     DATA = 0x60
     KDATA = 0x68
@@ -89,6 +108,7 @@ class IPCPortOffsets(Enum):
     IP_SORIGHTS = 0xA4
 
 
+""" osfmk/kern/ipc_kobject.h """
 IO_BITS_TYPES = [
     "IKOT_NONE",
     "IKOT_THREAD",
