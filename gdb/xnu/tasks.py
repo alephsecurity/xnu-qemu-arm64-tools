@@ -35,7 +35,7 @@ class PrintThreadList(gdb.Command):
                         gdb.GdbError(gdb.GdbError("wrong args"))
             else:
                 raise gdb.GdbError("wrong args")
-        except:
+        except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
     def print_all_threads(self, user_only=False, is_global=False, task=None):
@@ -67,8 +67,9 @@ class PrintTaskList(gdb.Command):
         try:
             for task in iter(types.TasksIterator()):
                 gdb.write(task.print_task_info_short()+'\n')
-        except:
+        except Exception:
             raise gdb.GdbError(traceback.format_exc())
+
 
 PrintTaskList()
 
@@ -85,13 +86,13 @@ class PrintThreadInfo(gdb.Command):
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1:
                 thread = int(argv[0], 0)
-                if is_thread_exist(thread):
-                    gdb.write(Thread(thread).print_thread_info_long()+'\n')
+                if types.is_thread_exist(thread):
+                    gdb.write(types.Thread(thread).print_thread_info_long()+'\n')
                 else:
                     gdb.write("Given thread do not exist\n")
             else:
                 gdb.write("wrong args\n")
-        except:
+        except  Exception:
             raise gdb.GdbError(traceback.format_exc())
 
 
@@ -109,13 +110,13 @@ class PrintTaskInfo(gdb.Command):
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1:
                 task = int(argv[0], 0) #convert to integer
-                if is_task_exist(task):
-                    gdb.write(Task(task).print_task_info_long()+'\n')
+                if types.is_task_exist(task):
+                    gdb.write(types.Task(task).print_task_info_long()+'\n')
                 else:
                     gdb.write("Given task do not exist\n")
             else:
                 gdb.write("wrong args\n")
-        except:
+        except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
 
@@ -135,12 +136,12 @@ class PrintVoucherInfo(gdb.Command):
     def invoke(self, arg, from_tty):
         try:
             argv = gdb.string_to_argv(arg)
-            if len(argv) == 1 and is_valid_ptr(int(argv[0], 0)):
+            if len(argv) == 1 and sys_info.is_valid_ptr(int(argv[0], 0)):
                 voucher = int(argv[0], 0)
-                gdb.write(ThreadVoucher(voucher).print_voucher_info()+'\n')
+                gdb.write(types.ThreadVoucher(voucher).print_voucher_info()+'\n')
             else:
                 gdb.write("wrong args\n")
-        except:
+        except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
 
@@ -160,13 +161,14 @@ class PrintIpcPortInfo(gdb.Command):
         """ print info """
         try:
             argv = gdb.string_to_argv(arg)
-            if len(argv) == 1 and is_valid_ptr(int(argv[0], 0)):
+            if len(argv) == 1 and sys_info.is_valid_ptr(int(argv[0], 0)):
                 ipc_port = int(argv[0], 0)
-                gdb.write(IPCPort(ipc_port).print_ipc_port_info()+'\n')
+                gdb.write(types.IPCPort(ipc_port).print_ipc_port_info()+'\n')
             else:
                 gdb.write("wrong args\n")
-        except:
+        except Exception:
             raise gdb.GdbError(traceback.format_exc())
+
 
 PrintIpcPortInfo()
 
@@ -186,10 +188,10 @@ class PrintIPCEntryList(gdb.Command):
         """ Can get as argument pointer to task or pointer to space"""
         try:
             argv = gdb.string_to_argv(arg)
-            if len(argv) == 2 and is_valid_ptr(int(argv[1], 0)):
-                if argv[0] == "-task" and is_task_exist(int(argv[1], 0)):
+            if len(argv) == 2 and sys_info.is_valid_ptr(int(argv[1], 0)):
+                if argv[0] == "-task" and types.is_task_exist(int(argv[1], 0)):
                     task = int(argv[1], 0)
-                    self.print_ipc_space_table(Task(task).ipc_space)
+                    self.print_ipc_space_table(types.Task(task).ipc_space)
                 elif argv[0] == "-space":
                     space = int(argv[1], 0)
                     self.print_ipc_space_table(space)
@@ -198,7 +200,7 @@ class PrintIPCEntryList(gdb.Command):
                         "wrong args, usage $ xnu-ipc_entry-list -task/table {PTR} \n")
             else:
                 gdb.write(f"wrong args\n")
-        except:
+        except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
     def print_ipc_space_table(self, address):

@@ -92,8 +92,8 @@ class Thread:
 
     def print_thead_info_short(self, max_length_proc, max_length_cont, max_length_pc):
         res_str = ""
-        is_user = True if self.ucontext_data != const.NULL_PTR else False
-        is_current = True if self.address == sys_info.get_current_thread_ptr() else False
+        is_user = (self.ucontext_data != const.NULL_PTR)
+        is_current = (self.address == sys_info.get_current_thread_ptr())
         res_str += '*' if is_current else ' '
         res_str += 'U |' if is_user else 'K |'
         res_str += f" [{self.task_object.bsdinfo_object.bsd_pid}] |"
@@ -115,31 +115,31 @@ class Thread:
 
         res_str += f"Next pc: {sys_info.get_symbol(hex(self.next_pc))}\n\n" \
             if self.next_pc != const.NULL_PTR else ""
-        res_str += f"thread->task\
-            {utils.print_ptr_as_string(self.task_ptr)}\n"
+        res_str += f"thread->task: \
+{utils.print_ptr_as_string(self.task_ptr)}\n"
         if self.task_object:
-            res_str += f"thread->task->bsd_info\
-                {utils.print_ptr_as_string(self.task_object.bsd_info_ptr)}\n"
+            res_str += f"thread->task->bsd_info: \
+{utils.print_ptr_as_string(self.task_object.bsd_info_ptr)}\n"
         if self.task_object.bsd_info_ptr:
-            res_str += f"thread->task->bsd_info->bsd_name\
-                {self.task_object.bsdinfo_object.bsd_name}\n"
-            res_str += f"thread->task->bsd_info->bsd_pid\
-                {utils.print_ptr_as_string(self.task_object.bsdinfo_object.bsd_pid)}\n"
-        res_str += f"thread->tid                            {str(self.tid)}\n"
-        res_str += f"thread->continuation\
-            {utils.print_ptr_as_string(self.continuation)}\n"
-        res_str += f"thread->ucontext_data\
-            {utils.print_ptr_as_string(self.ucontext_data)}\n"
+            res_str += f"thread->task->bsd_info->bsd_name: \
+{self.task_object.bsdinfo_object.bsd_name}\n"
+            res_str += f"thread->task->bsd_info->bsd_pid: \
+{utils.print_ptr_as_string(self.task_object.bsdinfo_object.bsd_pid)}\n"
+        res_str += f"thread->tid: {str(self.tid)}\n"
+        res_str += f"thread->continuation: \
+{utils.print_ptr_as_string(self.continuation)}\n"
+        res_str += f"thread->ucontext_data: \
+{utils.print_ptr_as_string(self.ucontext_data)}\n"
         if self.ucontext_data:
             saved_state = ThreadSavedState(self.ucontext_data)
             res_str += saved_state.print_saved_state("thread->ucontext_data")
-        res_str += f"thread->kstackptr\
-            {utils.print_ptr_as_string(self.kernel_stack_ptr)}\n"
+        res_str += f"thread->kstackptr: \
+{utils.print_ptr_as_string(self.kernel_stack_ptr)}\n"
         if self.kernel_stack_ptr:
             saved_state = ThreadSavedState(self.kernel_stack_ptr)
             res_str += saved_state.print_saved_state("thread->kstackptr")
-        res_str += f"thread->voucher_ptr\
-            {utils.print_ptr_as_string(self.voucher_ptr)}\n"
+        res_str += f"thread->voucher_ptr: \
+{utils.print_ptr_as_string(self.voucher_ptr)}\n"
 
         return res_str
 
@@ -175,9 +175,9 @@ class IPCSpace:
 
     def print_ipc_space_info(self):
         res_str = ""
-        res_str += f"ipc_space->is_table {hex(self.is_table)}\n"
-        res_str += f"ipc_space->is_table_size {self.is_table_size} - (first reserved)\n"
-        res_str += f"ipc_space->is_table_free {self.is_table_free}\n"
+        res_str += f"ipc_space->is_table: {hex(self.is_table)}\n"
+        res_str += f"ipc_space->is_table_size: {self.is_table_size} - (first reserved)\n"
+        res_str += f"ipc_space->is_table_free: {self.is_table_free}\n"
         return res_str
 
 
@@ -200,10 +200,10 @@ class IPCEntry:
 
     def print_ipc_entry_info(self):
         res_str = ""
-        res_str += f"ipc_entry->ie_object = {utils.print_ptr_as_string(self.ie_object)}\n"
-        res_str += f"ipc_entry->ie_bits = {hex(self.ie_bits)}\n"
-        res_str += f"ipc_entry->ie_index = {hex(self.ie_index)}\n"
-        res_str += f"ipc_entry->ie_next = {hex(self.index)}\n"
+        res_str += f"ipc_entry->ie_object: {utils.print_ptr_as_string(self.ie_object)}\n"
+        res_str += f"ipc_entry->ie_bits: {hex(self.ie_bits)}\n"
+        res_str += f"ipc_entry->ie_index: {hex(self.ie_index)}\n"
+        res_str += f"ipc_entry->ie_next: {hex(self.index)}\n"
         return res_str
 
 
@@ -223,11 +223,11 @@ class IPCObject:
 
     def print_ipc_object_info(self):
         res_str = ""
-        res_str += f"ip_object->io_bits \
+        res_str += f"ip_object->io_bits: \
 {const.IO_BITS_TYPES[self.io_bits & const.IO_BITS_KOTYPE]}\n"
-        res_str += f"ip_object->io_references   {hex(self.io_references)}\n"
-        res_str += f"ip_object->io_lock_data[0] {hex(self.io_lock_data_1)}\n"
-        res_str += f"ip_object->io_lock_data[1] {hex(self.io_lock_data_2)}\n"
+        res_str += f"ip_object->io_references: {hex(self.io_references)}\n"
+        res_str += f"ip_object->io_lock_data[0]: {hex(self.io_lock_data_1)}\n"
+        res_str += f"ip_object->io_lock_data[1]: {hex(self.io_lock_data_2)}\n"
         return res_str
 
 
@@ -273,23 +273,23 @@ class IPCPort:
     def print_ipc_port_info(self):
         res_str = ""
         res_str += self.ip_object_object.print_ipc_object_info()
-        res_str += f"ipc_port->ip_messages       {self.ip_messages }\n"
-        res_str += f"ipc_port->data       {utils.print_ptr_as_string(self.data) }\n"
-        res_str += f"ipc_port->kdata       {utils.print_ptr_as_string(self.kdata) }\n"
-        res_str += f"ipc_port->kdata2       {utils.print_ptr_as_string(self.kdata2 )}\n"
-        res_str += f"ipc_port->ip_context       {self.ip_context }\n"
-        res_str += f"ipc_port->ip_sprequests       {self.ip_sprequests }\n"
-        res_str += f"ipc_port->ip_spimportant       {self.ip_spimportant }\n"
-        res_str += f"ipc_port->ip_impdonation       {self.ip_impdonation }\n"
-        res_str += f"ipc_port->ip_tempowner       {self.ip_tempowner }\n"
-        res_str += f"ipc_port->ip_guarded       {self.ip_guarded }\n"
-        res_str += f"ipc_port->ip_strict_guard       {self.ip_strict_guard }\n"
-        res_str += f"ipc_port->ip_specialreply       {self.ip_specialreply }\n"
-        res_str += f"ipc_port->ip_sync_link_state       {self.ip_sync_link_state }\n"
-        res_str += f"ipc_port->ip_impcount       {self.ip_impcount }\n"
-        res_str += f"ipc_port->ip_mscount       {self.ip_mscount }\n"
-        res_str += f"ipc_port->ip_srights       {self.ip_srights }\n"
-        res_str += f"ipc_port->ip_sorights       {self.ip_sorights }\n"
+        res_str += f"ipc_port->ip_messages: {self.ip_messages }\n"
+        res_str += f"ipc_port->data: {utils.print_ptr_as_string(self.data) }\n"
+        res_str += f"ipc_port->kdata: {utils.print_ptr_as_string(self.kdata) }\n"
+        res_str += f"ipc_port->kdata2: {utils.print_ptr_as_string(self.kdata2 )}\n"
+        res_str += f"ipc_port->ip_context: {self.ip_context }\n"
+        res_str += f"ipc_port->ip_sprequests: {self.ip_sprequests }\n"
+        res_str += f"ipc_port->ip_spimportant: {self.ip_spimportant }\n"
+        res_str += f"ipc_port->ip_impdonation: {self.ip_impdonation }\n"
+        res_str += f"ipc_port->ip_tempowner: {self.ip_tempowner }\n"
+        res_str += f"ipc_port->ip_guarded: {self.ip_guarded }\n"
+        res_str += f"ipc_port->ip_strict_guard: {self.ip_strict_guard }\n"
+        res_str += f"ipc_port->ip_specialreply: {self.ip_specialreply }\n"
+        res_str += f"ipc_port->ip_sync_link_state: {self.ip_sync_link_state }\n"
+        res_str += f"ipc_port->ip_impcount: {self.ip_impcount }\n"
+        res_str += f"ipc_port->ip_mscount: {self.ip_mscount }\n"
+        res_str += f"ipc_port->ip_srights: {self.ip_srights }\n"
+        res_str += f"ipc_port->ip_sorights: {self.ip_sorights }\n"
         return res_str
 
 
@@ -313,7 +313,7 @@ class Task:
 
     def print_task_info_short(self):
         res_str = ""
-        is_current = True if self.address == sys_info.get_current_task_ptr() else False
+        is_current = (self.address == sys_info.get_current_task_ptr())
         res_str += '*' if is_current else ' '
         res_str += f" [{self.bsdinfo_object.bsd_pid}] | {self.bsdinfo_object.bsd_name:<15} |"
         res_str += f"  {hex(self.address)} "
@@ -322,11 +322,11 @@ class Task:
 
     def print_task_info_long(self):
         res_str = "\n"
-        res_str += f"task->bsd_info = {utils.print_ptr_as_string(self.bsd_info_ptr)}\n"
-        res_str += f"task->itk_self = {utils.print_ptr_as_string(self.itk_self)}\n"
-        res_str += f"task->ipc_space = {utils.print_ptr_as_string(self.ipc_space)}\n"
-        res_str += f"task->ipc_space->is_table = \
-            {utils.print_ptr_as_string(self.ipc_space_object.is_table)}\n"
+        res_str += f"task->bsd_info: {utils.print_ptr_as_string(self.bsd_info_ptr)}\n"
+        res_str += f"task->itk_self: {utils.print_ptr_as_string(self.itk_self)}\n"
+        res_str += f"task->ipc_space: {utils.print_ptr_as_string(self.ipc_space)}\n"
+        res_str += f"task->ipc_space->is_table: \
+{utils.print_ptr_as_string(self.ipc_space_object.is_table)}\n"
         return res_str
 
 # Saved State
@@ -377,51 +377,51 @@ class ThreadSavedState:
 
     def print_saved_state(self, previous_struct):
         res_str = ""
-        res_str += f"{previous_struct}->x0			{utils.print_ptr_as_string(self.x0)}\n"
-        res_str += f"{previous_struct}->x1			{utils.print_ptr_as_string(self.x1)}\n"
-        res_str += f"{previous_struct}->x2			{utils.print_ptr_as_string(self.x2)}\n"
-        res_str += f"{previous_struct}->x3			{utils.print_ptr_as_string(self.x3)}\n"
-        res_str += f"{previous_struct}->x4			{utils.print_ptr_as_string(self.x4)}\n"
-        res_str += f"{previous_struct}->x5			{utils.print_ptr_as_string(self.x5)}\n"
-        res_str += f"{previous_struct}->x6			{utils.print_ptr_as_string(self.x6)}\n"
-        res_str += f"{previous_struct}->x7			{utils.print_ptr_as_string(self.x7)}\n"
-        res_str += f"{previous_struct}->x8			{utils.print_ptr_as_string(self.x8)}\n"
-        res_str += f"{previous_struct}->x9			{utils.print_ptr_as_string(self.x9)}\n"
-        res_str += f"{previous_struct}->x10			{utils.print_ptr_as_string(self.x10)}\n"
-        res_str += f"{previous_struct}->x11			{utils.print_ptr_as_string(self.x11)}\n"
-        res_str += f"{previous_struct}->x12			{utils.print_ptr_as_string(self.x12)}\n"
-        res_str += f"{previous_struct}->x13			{utils.print_ptr_as_string(self.x13)}\n"
-        res_str += f"{previous_struct}->x14			{utils.print_ptr_as_string(self.x14)}\n"
-        res_str += f"{previous_struct}->x15			{utils.print_ptr_as_string(self.x15)}\n"
-        res_str += f"{previous_struct}->x16			{utils.print_ptr_as_string(self.x16)}\n"
-        res_str += f"{previous_struct}->x17			{utils.print_ptr_as_string(self.x17)}\n"
-        res_str += f"{previous_struct}->x18			{utils.print_ptr_as_string(self.x18)}\n"
-        res_str += f"{previous_struct}->x19			{utils.print_ptr_as_string(self.x19)}\n"
-        res_str += f"{previous_struct}->x20			{utils.print_ptr_as_string(self.x20)}\n"
-        res_str += f"{previous_struct}->x21			{utils.print_ptr_as_string(self.x21)}\n"
-        res_str += f"{previous_struct}->x22			{utils.print_ptr_as_string(self.x22)}\n"
-        res_str += f"{previous_struct}->x23			{utils.print_ptr_as_string(self.x23)}\n"
-        res_str += f"{previous_struct}->x24			{utils.print_ptr_as_string(self.x24)}\n"
-        res_str += f"{previous_struct}->x25			{utils.print_ptr_as_string(self.x25)}\n"
-        res_str += f"{previous_struct}->x26			{utils.print_ptr_as_string(self.x26)}\n"
-        res_str += f"{previous_struct}->x27			{utils.print_ptr_as_string(self.x27)}\n"
-        res_str += f"{previous_struct}->x28			{utils.print_ptr_as_string(self.x28)}\n"
-        res_str += f"{previous_struct}->fp			{utils.print_ptr_as_string(self.fp)}\n"
-        res_str += f"{previous_struct}->lr			{utils.print_ptr_as_string(self.lr)}\n"
-        res_str += f"{previous_struct}->sp			{utils.print_ptr_as_string(self.sp)}\n"
-        res_str += f"{previous_struct}->pc			\
+        res_str += f"{previous_struct}->x0: {utils.print_ptr_as_string(self.x0)}\n"
+        res_str += f"{previous_struct}->x1: {utils.print_ptr_as_string(self.x1)}\n"
+        res_str += f"{previous_struct}->x2: {utils.print_ptr_as_string(self.x2)}\n"
+        res_str += f"{previous_struct}->x3: {utils.print_ptr_as_string(self.x3)}\n"
+        res_str += f"{previous_struct}->x4: {utils.print_ptr_as_string(self.x4)}\n"
+        res_str += f"{previous_struct}->x5: {utils.print_ptr_as_string(self.x5)}\n"
+        res_str += f"{previous_struct}->x6: {utils.print_ptr_as_string(self.x6)}\n"
+        res_str += f"{previous_struct}->x7: {utils.print_ptr_as_string(self.x7)}\n"
+        res_str += f"{previous_struct}->x8: {utils.print_ptr_as_string(self.x8)}\n"
+        res_str += f"{previous_struct}->x9: {utils.print_ptr_as_string(self.x9)}\n"
+        res_str += f"{previous_struct}->x10: {utils.print_ptr_as_string(self.x10)}\n"
+        res_str += f"{previous_struct}->x11: {utils.print_ptr_as_string(self.x11)}\n"
+        res_str += f"{previous_struct}->x12: {utils.print_ptr_as_string(self.x12)}\n"
+        res_str += f"{previous_struct}->x13: {utils.print_ptr_as_string(self.x13)}\n"
+        res_str += f"{previous_struct}->x14: {utils.print_ptr_as_string(self.x14)}\n"
+        res_str += f"{previous_struct}->x15: {utils.print_ptr_as_string(self.x15)}\n"
+        res_str += f"{previous_struct}->x16: {utils.print_ptr_as_string(self.x16)}\n"
+        res_str += f"{previous_struct}->x17: {utils.print_ptr_as_string(self.x17)}\n"
+        res_str += f"{previous_struct}->x18: {utils.print_ptr_as_string(self.x18)}\n"
+        res_str += f"{previous_struct}->x19: {utils.print_ptr_as_string(self.x19)}\n"
+        res_str += f"{previous_struct}->x20: {utils.print_ptr_as_string(self.x20)}\n"
+        res_str += f"{previous_struct}->x21: {utils.print_ptr_as_string(self.x21)}\n"
+        res_str += f"{previous_struct}->x22: {utils.print_ptr_as_string(self.x22)}\n"
+        res_str += f"{previous_struct}->x23: {utils.print_ptr_as_string(self.x23)}\n"
+        res_str += f"{previous_struct}->x24: {utils.print_ptr_as_string(self.x24)}\n"
+        res_str += f"{previous_struct}->x25: {utils.print_ptr_as_string(self.x25)}\n"
+        res_str += f"{previous_struct}->x26: {utils.print_ptr_as_string(self.x26)}\n"
+        res_str += f"{previous_struct}->x27: {utils.print_ptr_as_string(self.x27)}\n"
+        res_str += f"{previous_struct}->x28: {utils.print_ptr_as_string(self.x28)}\n"
+        res_str += f"{previous_struct}->fp: {utils.print_ptr_as_string(self.fp)}\n"
+        res_str += f"{previous_struct}->lr: {utils.print_ptr_as_string(self.lr)}\n"
+        res_str += f"{previous_struct}->sp: {utils.print_ptr_as_string(self.sp)}\n"
+        res_str += f"{previous_struct}->pc: \
 {sys_info.get_symbol(utils.print_ptr_as_string(self.pc))}\n"
-        res_str += f"{previous_struct}->cpsr			{hex(self.cpsr)}\n"
-        res_str += f"{previous_struct}->reserved             {hex(self.reserved)}\n"
-        res_str += f"{previous_struct}->far			{utils.print_ptr_as_string(self.far)}\n"
-        res_str += f"{previous_struct}->esr			{hex(self.esr)}\n"
-        res_str += f"{previous_struct}->exception		{hex(self.exception)}\n"
+        res_str += f"{previous_struct}->cpsr: {hex(self.cpsr)}\n"
+        res_str += f"{previous_struct}->reserved: {hex(self.reserved)}\n"
+        res_str += f"{previous_struct}->far: {utils.print_ptr_as_string(self.far)}\n"
+        res_str += f"{previous_struct}->esr: {hex(self.esr)}\n"
+        res_str += f"{previous_struct}->exception: {hex(self.exception)}\n"
 
         return res_str
 
 # Voucher
 
-
+#TODO offsets
 class ThreadVoucher:
     def __init__(self, address):
         if address != const.NULL_PTR:
@@ -436,19 +436,19 @@ class ThreadVoucher:
 
     def print_voucher_info(self):
         res_str = ""
-        res_str += f"iv_hash			{hex(self.iv_hash)}\n"
-        res_str += f"iv_sum			{hex(self.iv_sum)}\n"
-        res_str += f"iv_refs			{hex(self.iv_refs)}\n"
-        res_str += f"iv_table_size		{hex(self.iv_table_size)}\n"
-        res_str += f"iv_inline_table	        {hex(self.iv_inline_table)}\n"
+        res_str += f"iv_hash: {hex(self.iv_hash)}\n"
+        res_str += f"iv_sum: {hex(self.iv_sum)}\n"
+        res_str += f"iv_refs: {hex(self.iv_refs)}\n"
+        res_str += f"iv_table_size: {hex(self.iv_table_size)}\n"
+        res_str += f"iv_inline_table: {hex(self.iv_inline_table)}\n"
         # res_str += f"iv_table		{hex(self.iv_table)}\n" #TODO
-        res_str += f"iv_port			{hex(self.iv_port)}\n"
-        res_str += f"iv_hash_link		{hex((self.iv_hash_link))}\n"
+        res_str += f"iv_port: {hex(self.iv_port)}\n"
+        res_str += f"iv_hash_link: {hex((self.iv_hash_link))}\n"
         return res_str
 
+
+
 # THREAD ITERATOR
-
-
 class ThreadsIterator:
     def __init__(self, is_global=False, task=None):
         self.next_thread_ptr = None
@@ -486,8 +486,7 @@ class ThreadsIterator:
                 self.next_thread_ptr = utils.get_8_byte_at(
                     self.result.curr_task_threads_ptr)
             return self.result
-        else:
-            raise StopIteration
+        raise StopIteration
 
 
 class TasksIterator:
@@ -504,8 +503,7 @@ class TasksIterator:
             self.result = Task(self.next_task_ptr)
             self.next_task_ptr = utils.get_8_byte_at(self.result.task_lst_ptr)
             return self.result
-        else:
-            raise StopIteration
+        raise StopIteration
 
 
 class IPCEntryIterator:

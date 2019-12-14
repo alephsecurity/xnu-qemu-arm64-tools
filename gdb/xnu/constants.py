@@ -108,7 +108,7 @@ class IPCPortOffsets(Enum):
     IP_SORIGHTS = 0xA4
 
 
-""" osfmk/kern/ipc_kobject.h """
+# osfmk/kern/ipc_kobject.h
 IO_BITS_TYPES = [
     "IKOT_NONE",
     "IKOT_THREAD",

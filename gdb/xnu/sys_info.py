@@ -21,14 +21,13 @@ def get_current_thread_ptr():
 
 # TODO put into thread class
 def is_user_thread(thread):
-    return True if thread.ucontext_data != const.NULL_PTR else False
-
+    return thread.ucontext_data != const.NULL_PTR
 
 def is_valid_ptr(ptr):
     try:
         utils.get_8_byte_at(ptr)
         return True
-    except:
+    except Exception:
         raise gdb.GdbError(f"Wrong pointer! {hex(ptr)}")
 
 
