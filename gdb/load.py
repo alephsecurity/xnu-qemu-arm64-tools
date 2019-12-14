@@ -17,10 +17,12 @@ MODULES_TO_IPMORT = [
     "xnu.sys_info",
     "xnu.zone",
     "xnu.xnu_types",
-    "xnu.tasks",
+    "xnu.tasks"
     ]
 
 try:
+    #this will make python to look for new versions
+    importlib.invalidate_caches()
     for module in MODULES_TO_IPMORT:
         if module not in sys.modules:
             importlib.import_module(module)
