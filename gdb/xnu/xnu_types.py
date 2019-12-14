@@ -245,29 +245,21 @@ class IPCPort:
                 address + const.IPCPortOffsets.KDATA2.value)
             self.ip_context = utils.get_8_byte_at(
                 address + const.IPCPortOffsets.IP_CTXT.value)
-            self.ip_sprequests = (
-                utils.get_4_byte_at(address + const.IPCPortOffsets.IP_SPREQ.value) & (1 << 0))
-            self.ip_spimportant = (
-                utils.get_4_byte_at(address + const.IPCPortOffsets.IP_SPREQ.value) & (1 << 1))
-            self.ip_impdonation = (
-                utils.get_4_byte_at(address + const.IPCPortOffsets.IP_SPREQ.value) & (1 << 2))
-            self.ip_tempowner = (
-                utils.get_4_byte_at(address + const.IPCPortOffsets.IP_SPREQ.value) & (1 << 3))
-            self.ip_guarded = (
-                utils.get_4_byte_at(address + const.IPCPortOffsets.IP_SPREQ.value) & (1 << 4))
-            self.ip_strict_guard = (
-                utils.get_4_byte_at(address + const.IPCPortOffsets.IP_SPREQ.value) & (1 << 5))
-            self.ip_specialreply = (
-                utils.get_4_byte_at(address + const.IPCPortOffsets.IP_SPREQ.value) & (1 << 6))
-            self.ip_sync_link_state = (utils.get_4_byte_at(
-                address + const.IPCPortOffsets.IP_SPREQ.value) & (0x000001ff))
-            self.ip_impcount = (utils.get_8_byte_at(
-                address + const.IPCPortOffsets.IP_SPREQ.value) & (0xfffffe00))
-            self.ip_mscount = utils.get_8_byte_at(
+            four_byte_data = utils.get_4_byte_at(address + const.IPCPortOffsets.IP_SPREQ.value)
+            self.ip_sprequests = (four_byte_data & (1 << 0))
+            self.ip_spimportant = (four_byte_data & (1 << 1))
+            self.ip_impdonation = (four_byte_data & (1 << 2))
+            self.ip_tempowner = (four_byte_data & (1 << 3))
+            self.ip_guarded = (four_byte_data & (1 << 4))
+            self.ip_strict_guard = (four_byte_data & (1 << 5))
+            self.ip_specialreply = (four_byte_data & (1 << 6))
+            self.ip_sync_link_state = (four_byte_data & (0x000001ff))
+            self.ip_impcount = (four_byte_data & (0xfffffe00))
+            self.ip_mscount = utils.get_4_byte_at(
                 address + const.IPCPortOffsets.IP_MSCNT.value)
-            self.ip_srights = utils.get_8_byte_at(
+            self.ip_srights = utils.get_4_byte_at(
                 address + const.IPCPortOffsets.IP_SRIGHTS.value)
-            self.ip_sorights = utils.get_8_byte_at(
+            self.ip_sorights = utils.get_4_byte_at(
                 address + const.IPCPortOffsets.IP_SORIGHTS.value)
 
     def print_ipc_port_info(self):
@@ -287,9 +279,9 @@ class IPCPort:
         res_str += f"ipc_port->ip_specialreply: {self.ip_specialreply }\n"
         res_str += f"ipc_port->ip_sync_link_state: {self.ip_sync_link_state }\n"
         res_str += f"ipc_port->ip_impcount: {self.ip_impcount }\n"
-        res_str += f"ipc_port->ip_mscount: {self.ip_mscount }\n"
-        res_str += f"ipc_port->ip_srights: {self.ip_srights }\n"
-        res_str += f"ipc_port->ip_sorights: {self.ip_sorights }\n"
+        res_str += f"ipc_port->ip_mscount: {hex(self.ip_mscount)}\n"
+        res_str += f"ipc_port->ip_srights: {hex(self.ip_srights)}\n"
+        res_str += f"ipc_port->ip_sorights: {hex(self.ip_sorights)}\n"
         return res_str
 
 
@@ -430,7 +422,7 @@ class ThreadVoucher:
             self.iv_refs = utils.get_8_byte_at(address + 0x08)
             self.iv_table_size = utils.get_8_byte_at(address + 0x0c)
             self.iv_inline_table = utils.get_8_byte_at(address + 0x10)
-            self.iv_tabl = utils.get_8_byte_at(address + 0x30)
+            self.iv_table = utils.get_8_byte_at(address + 0x30)
             self.iv_port = utils.get_8_byte_at(address + 0x38)
             self.iv_hash_link = utils.get_8_byte_at(address + 0x40)
 
@@ -441,7 +433,7 @@ class ThreadVoucher:
         res_str += f"iv_refs: {hex(self.iv_refs)}\n"
         res_str += f"iv_table_size: {hex(self.iv_table_size)}\n"
         res_str += f"iv_inline_table: {hex(self.iv_inline_table)}\n"
-        # res_str += f"iv_table		{hex(self.iv_table)}\n" #TODO
+        res_str += f"iv_table: {hex(self.iv_table)}\n"
         res_str += f"iv_port: {hex(self.iv_port)}\n"
         res_str += f"iv_hash_link: {hex((self.iv_hash_link))}\n"
         return res_str
@@ -542,8 +534,6 @@ def get_max_length_proc_name():
         if len(task.bsdinfo_object.bsd_name) > max_length:
             max_length = len(task.bsdinfo_object.bsd_name)
     return max_length
-
-# TODO make generic!
 
 
 def get_max_length_cont_name():
