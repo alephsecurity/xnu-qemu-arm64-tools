@@ -121,9 +121,9 @@ class Thread:
             res_str += f"thread->task->bsd_info: "\
                 f"{utils.print_ptr_as_string(self.task_object.bsd_info_ptr)}\n"
         if self.task_object.bsd_info_ptr:
-            res_str += f"thread->task->bsd_info->bsd_name: "\
+            res_str += f"thread->task->bsd_info->p_name: "\
                 f"{self.task_object.bsdinfo_object.bsd_name}\n"
-            res_str += f"thread->task->bsd_info->bsd_pid: "\
+            res_str += f"thread->task->bsd_info->p_pid: "\
                 f"{utils.print_ptr_as_string(self.task_object.bsdinfo_object.bsd_pid)}\n"
         res_str += f"thread->thread_id: {str(self.tid)}\n"
         res_str += f"thread->continuation: "\
@@ -322,6 +322,8 @@ class Task:
     def print_task_info_long(self):
         res_str = "\n"
         res_str += f"task->bsd_info: {utils.print_ptr_as_string(self.bsd_info_ptr)}\n"
+        res_str += f"task->bsd_info->p_name: {self.bsdinfo_object.bsd_name}\n"
+        res_str += f"task->bsd_info->p_pid: {hex(self.bsdinfo_object.bsd_pid)}\n"
         res_str += f"task->itk_self: {utils.print_ptr_as_string(self.itk_self)}\n"
         res_str += f"task->ipc_space: {utils.print_ptr_as_string(self.ipc_space)}\n"
         res_str += f"task->ipc_space->is_table: "\
