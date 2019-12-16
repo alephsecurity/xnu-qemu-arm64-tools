@@ -29,7 +29,10 @@ class PrintThreadList(gdb.Command):
                 else:
                     try:
                         requested_task = int(argv[0], 0)
-                        if types.is_task_exist(requested_task):  # May be not safe...
+                        if sys_info.is_valid_ptr(requested_task):
+                            if not types.is_task_exist(requested_task):
+                                gdb.write(f"\nRequested task {argv[0]} do not exist"
+                                          f" in the tasks list of the system!\n\n\n")
                             self.print_all_threads(task=requested_task)
                     except Exception:
                         gdb.GdbError(gdb.GdbError("wrong args"))
@@ -110,7 +113,10 @@ class PrintTaskInfo(gdb.Command):
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1:
                 task = int(argv[0], 0) #convert to integer
-                if types.is_task_exist(task):
+                if sys_info.is_valid_ptr(task):
+                    if not types.is_task_exist(task):
+                        gdb.write(f"\nRequested task {argv[0]} do not exist in the task "
+                                  f"list of the system!\n\n\n")
                     gdb.write(types.Task(task).print_task_info_long()+'\n')
                 else:
                     gdb.write("Given task do not exist\n")
@@ -189,8 +195,11 @@ class PrintIPCEntryList(gdb.Command):
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 2 and sys_info.is_valid_ptr(int(argv[1], 0)):
-                if argv[0] == "-task" and types.is_task_exist(int(argv[1], 0)):
+                if argv[0] == "-task":
                     task = int(argv[1], 0)
+                    if not types.is_task_exist(task):
+                        gdb.write(f"\nRequested task {argv[1]} do not exist in the tasks"
+                                  f"list of the system!\n\n\n")
                     self.print_ipc_space_table(types.Task(task).ipc_space)
                 elif argv[0] == "-space":
                     space = int(argv[1], 0)

@@ -115,31 +115,31 @@ class Thread:
 
         res_str += f"Next pc: {sys_info.get_symbol(hex(self.next_pc))}\n\n" \
             if self.next_pc != const.NULL_PTR else ""
-        res_str += f"thread->task: \
-{utils.print_ptr_as_string(self.task_ptr)}\n"
+        res_str += f"thread->task: " \
+                f"{utils.print_ptr_as_string(self.task_ptr)}\n"
         if self.task_object:
-            res_str += f"thread->task->bsd_info: \
-{utils.print_ptr_as_string(self.task_object.bsd_info_ptr)}\n"
+            res_str += f"thread->task->bsd_info: "\
+                f"{utils.print_ptr_as_string(self.task_object.bsd_info_ptr)}\n"
         if self.task_object.bsd_info_ptr:
-            res_str += f"thread->task->bsd_info->bsd_name: \
-{self.task_object.bsdinfo_object.bsd_name}\n"
-            res_str += f"thread->task->bsd_info->bsd_pid: \
-{utils.print_ptr_as_string(self.task_object.bsdinfo_object.bsd_pid)}\n"
+            res_str += f"thread->task->bsd_info->bsd_name: "\
+                f"{self.task_object.bsdinfo_object.bsd_name}\n"
+            res_str += f"thread->task->bsd_info->bsd_pid: "\
+                f"{utils.print_ptr_as_string(self.task_object.bsdinfo_object.bsd_pid)}\n"
         res_str += f"thread->tid: {str(self.tid)}\n"
-        res_str += f"thread->continuation: \
-{utils.print_ptr_as_string(self.continuation)}\n"
-        res_str += f"thread->ucontext_data: \
-{utils.print_ptr_as_string(self.ucontext_data)}\n"
+        res_str += f"thread->continuation: "\
+                f"{utils.print_ptr_as_string(self.continuation)}\n"
+        res_str += f"thread->ucontext_data: "\
+                f"{utils.print_ptr_as_string(self.ucontext_data)}\n"
         if self.ucontext_data:
             saved_state = ThreadSavedState(self.ucontext_data)
             res_str += saved_state.print_saved_state("thread->ucontext_data")
-        res_str += f"thread->kstackptr: \
-{utils.print_ptr_as_string(self.kernel_stack_ptr)}\n"
+        res_str += f"thread->kstackptr: "\
+                f"{utils.print_ptr_as_string(self.kernel_stack_ptr)}\n"
         if self.kernel_stack_ptr:
             saved_state = ThreadSavedState(self.kernel_stack_ptr)
             res_str += saved_state.print_saved_state("thread->kstackptr")
-        res_str += f"thread->voucher_ptr: \
-{utils.print_ptr_as_string(self.voucher_ptr)}\n"
+        res_str += f"thread->voucher_ptr: "\
+                f"{utils.print_ptr_as_string(self.voucher_ptr)}\n"
 
         return res_str
 
@@ -223,8 +223,8 @@ class IPCObject:
 
     def print_ipc_object_info(self):
         res_str = ""
-        res_str += f"ip_object->io_bits: \
-{const.IO_BITS_TYPES[self.io_bits & const.IO_BITS_KOTYPE]}\n"
+        res_str += f"ip_object->io_bits: "\
+                f"{const.IO_BITS_TYPES[self.io_bits & const.IO_BITS_KOTYPE]}\n"
         res_str += f"ip_object->io_references: {hex(self.io_references)}\n"
         res_str += f"ip_object->io_lock_data[0]: {hex(self.io_lock_data_1)}\n"
         res_str += f"ip_object->io_lock_data[1]: {hex(self.io_lock_data_2)}\n"
@@ -317,8 +317,8 @@ class Task:
         res_str += f"task->bsd_info: {utils.print_ptr_as_string(self.bsd_info_ptr)}\n"
         res_str += f"task->itk_self: {utils.print_ptr_as_string(self.itk_self)}\n"
         res_str += f"task->ipc_space: {utils.print_ptr_as_string(self.ipc_space)}\n"
-        res_str += f"task->ipc_space->is_table: \
-{utils.print_ptr_as_string(self.ipc_space_object.is_table)}\n"
+        res_str += f"task->ipc_space->is_table: "\
+                f"{utils.print_ptr_as_string(self.ipc_space_object.is_table)}\n"
         return res_str
 
 # Saved State
@@ -556,6 +556,6 @@ def get_max_length_pc_name():
 
 def get_thead_info_title(max_length_proc, max_length_cont, max_length_pc):
     res_str = ""
-    res_str += f'U/K| PID | {"NAME":^{max_length_proc}} | TID |     \
-THREAD_PTR     | {"CONTINUATION":^{max_length_cont}} | {"NEXT_PC*":^{max_length_pc}} |'
+    res_str += f'U/K| PID | {"NAME":^{max_length_proc}} | TID |     '\
+f'THREAD_PTR     | {"CONTINUATION":^{max_length_cont}} | {"NEXT_PC*":^{max_length_pc}} |'
     return res_str
