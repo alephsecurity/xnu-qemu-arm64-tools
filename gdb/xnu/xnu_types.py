@@ -107,7 +107,7 @@ class Thread:
         return res_str
 
     def print_thread_info_long(self):
-        res_str = ""
+        res_str = "\n"
         if sys_info.is_user_thread(self):
             res_str += "This is a user space thread\n\n"
         else:
@@ -125,20 +125,20 @@ class Thread:
                 f"{self.task_object.bsdinfo_object.bsd_name}\n"
             res_str += f"thread->task->bsd_info->bsd_pid: "\
                 f"{utils.print_ptr_as_string(self.task_object.bsdinfo_object.bsd_pid)}\n"
-        res_str += f"thread->tid: {str(self.tid)}\n"
+        res_str += f"thread->thread_id: {str(self.tid)}\n"
         res_str += f"thread->continuation: "\
                 f"{utils.print_ptr_as_string(self.continuation)}\n"
-        res_str += f"thread->ucontext_data: "\
+        res_str += f"thread->machine.contextData: "\
                 f"{utils.print_ptr_as_string(self.ucontext_data)}\n"
         if self.ucontext_data:
             saved_state = ThreadSavedState(self.ucontext_data)
-            res_str += saved_state.print_saved_state("thread->ucontext_data")
-        res_str += f"thread->kstackptr: "\
+            res_str += saved_state.print_saved_state("thread->machine.contextData")
+        res_str += f"thread->machine.kstackptr: "\
                 f"{utils.print_ptr_as_string(self.kernel_stack_ptr)}\n"
         if self.kernel_stack_ptr:
             saved_state = ThreadSavedState(self.kernel_stack_ptr)
-            res_str += saved_state.print_saved_state("thread->kstackptr")
-        res_str += f"thread->voucher_ptr: "\
+            res_str += saved_state.print_saved_state("thread->machine.kstackptr")
+        res_str += f"thread->ith_voucher: "\
                 f"{utils.print_ptr_as_string(self.voucher_ptr)}\n"
 
         return res_str
@@ -174,7 +174,7 @@ class IPCSpace:
             raise gdb.GdbError(f"Null pointer for {__name__}")
 
     def print_ipc_space_info(self):
-        res_str = ""
+        res_str = "\n"
         res_str += f"ipc_space->is_table: {hex(self.is_table)}\n"
         res_str += f"ipc_space->is_table_size: {self.is_table_size} - (first reserved)\n"
         res_str += f"ipc_space->is_table_free: {self.is_table_free}\n"
@@ -199,7 +199,7 @@ class IPCEntry:
             raise gdb.GdbError(f"Wrong pointer to IPC Entry {address}")
 
     def print_ipc_entry_info(self):
-        res_str = ""
+        res_str = "\n"
         res_str += f"ipc_entry->ie_object: {utils.print_ptr_as_string(self.ie_object)}\n"
         res_str += f"ipc_entry->ie_bits: {hex(self.ie_bits)}\n"
         res_str += f"ipc_entry->ie_index: {hex(self.ie_index)}\n"
@@ -222,7 +222,7 @@ class IPCObject:
             raise gdb.GdbError(f"Wrong pointer to IPC Object {address}")
 
     def print_ipc_object_info(self):
-        res_str = ""
+        res_str = "\n"
         res_str += f"ip_object->io_bits: "\
                 f"{const.IO_BITS_TYPES[self.io_bits & const.IO_BITS_KOTYPE]}\n"
         res_str += f"ip_object->io_references: {hex(self.io_references)}\n"
@@ -263,8 +263,12 @@ class IPCPort:
                 address + const.IPCPortOffsets.IP_SORIGHTS.value)
 
     def print_ipc_port_info(self):
-        res_str = ""
-        res_str += self.ip_object_object.print_ipc_object_info()
+        res_str = "\n"
+        res_str += f"ipc_port->ip_object.io_bits: "\
+                f"{const.IO_BITS_TYPES[self.ip_object_object.io_bits & const.IO_BITS_KOTYPE]}\n"
+        res_str += f"ipc_port->ip_object.io_references: {hex(self.ip_object_object.io_references)}\n"
+        res_str += f"ipc_port->ip_object.io_lock_data[0]: {hex(self.ip_object_object.io_lock_data_1)}\n"
+        res_str += f"ipc_port->ip_object.io_lock_data[1]: {hex(self.ip_object_object.io_lock_data_2)}\n"
         res_str += f"ipc_port->ip_messages: {self.ip_messages }\n"
         res_str += f"ipc_port->data: {utils.print_ptr_as_string(self.data) }\n"
         res_str += f"ipc_port->kdata: {utils.print_ptr_as_string(self.kdata) }\n"
@@ -427,15 +431,15 @@ class ThreadVoucher:
             self.iv_hash_link = utils.get_8_byte_at(address + 0x40)
 
     def print_voucher_info(self):
-        res_str = ""
-        res_str += f"iv_hash: {hex(self.iv_hash)}\n"
-        res_str += f"iv_sum: {hex(self.iv_sum)}\n"
-        res_str += f"iv_refs: {hex(self.iv_refs)}\n"
-        res_str += f"iv_table_size: {hex(self.iv_table_size)}\n"
-        res_str += f"iv_inline_table: {hex(self.iv_inline_table)}\n"
-        res_str += f"iv_table: {hex(self.iv_table)}\n"
-        res_str += f"iv_port: {hex(self.iv_port)}\n"
-        res_str += f"iv_hash_link: {hex((self.iv_hash_link))}\n"
+        res_str = "\n"
+        res_str += f"ipc_voucher->iv_hash: {hex(self.iv_hash)}\n"
+        res_str += f"ipc_voucher->iv_sum: {hex(self.iv_sum)}\n"
+        res_str += f"ipc_voucher->iv_refs: {hex(self.iv_refs)}\n"
+        res_str += f"ipc_voucher->iv_table_size: {hex(self.iv_table_size)}\n"
+        res_str += f"ipc_voucher->iv_inline_table: {hex(self.iv_inline_table)}\n"
+        res_str += f"ipc_voucher->iv_table: {hex(self.iv_table)}\n"
+        res_str += f"ipc_voucher->iv_port: {hex(self.iv_port)}\n"
+        res_str += f"ipc_voucher->iv_hash_link: {hex((self.iv_hash_link))}\n"
         return res_str
 
 
