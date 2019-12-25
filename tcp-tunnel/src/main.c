@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #include "hw/arm/guest-services/general.h"
 
@@ -26,9 +27,9 @@ typedef struct {
     ssize_t (*send)(int sckt, const void *buffer, size_t length, int flags);
 } socket_t;
 
-void init_qemu_socket(socket_t *sock_struct);
-void init_native_socket(socket_t *sock_struct);
-
+static void init_qemu_socket(socket_t *sock_struct);
+static void init_native_socket(socket_t *sock_struct);
+static void terminate(int signum);
 static int usage(const char *prog_name);
 static int parse_address_spec(char* address_spec, uint32_t *listen_port,
                               char *target_ip, size_t target_ip_size,
@@ -40,11 +41,13 @@ static int handle_incoming_connection(socket_t *in, socket_t *out,
 static int tunnel(socket_t *s_listen, socket_t *in, socket_t *out,
                   uint32_t listen_port, char *target_ip, uint32_t target_port);
 
+static socket_t s_listen = {.fd = -1}, s_in = {.fd = -1}, s_out = {.fd = -1};
+
 int main(int argc, char *argv[])
 {
     uint32_t listen_port = 0, target_port = 0;
-    socket_t s_listen, s_in, s_out;
     char target_ip[30];
+    struct sigaction action;
 
     if (argc != 3) {
         return usage(argv[0]);
@@ -55,6 +58,11 @@ int main(int argc, char *argv[])
     {
         return usage(argv[0]);
     }
+
+    memset(&action, 0, sizeof(struct sigaction));
+    action.sa_handler = terminate;
+    sigaction(SIGTERM, &action, NULL);
+
 
     if (!strncmp(argv[1], "in", 2)) {
         init_qemu_socket(&s_listen);
@@ -75,7 +83,7 @@ int main(int argc, char *argv[])
     }
 }
 
-void init_qemu_socket(socket_t *sock_struct)
+static void init_qemu_socket(socket_t *sock_struct)
 {
     if (sock_struct) {
         sock_struct->error   = &qemu_errno;
@@ -93,7 +101,7 @@ void init_qemu_socket(socket_t *sock_struct)
     }
 }
 
-void init_native_socket(socket_t *sock_struct)
+static void init_native_socket(socket_t *sock_struct)
 {
     if (sock_struct) {
         sock_struct->error   = &errno;
@@ -109,6 +117,26 @@ void init_native_socket(socket_t *sock_struct)
         sock_struct->recv    = &recv;
         sock_struct->send    = &send;
     }
+}
+
+static void terminate(int signum)
+{
+    if (s_out.fd != -1) {
+        fprintf(stderr, "Closing outward socket...\n");
+        s_out.close(s_out.fd);
+    }
+
+    if (s_in.fd != -1) {
+        fprintf(stderr, "Closing inward socket...\n");
+        s_in.close(s_in.fd);
+    }
+
+    if (s_listen.fd != -1) {
+        fprintf(stderr, "Closing listening socket...\n");
+        s_listen.close(s_listen.fd);
+    }
+
+    exit(0);
 }
 
 static int usage(const char *prog_name)
