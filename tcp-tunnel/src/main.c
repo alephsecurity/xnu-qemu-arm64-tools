@@ -26,6 +26,9 @@ typedef struct {
     ssize_t (*send)(int sckt, const void *buffer, size_t length, int flags);
 } socket_t;
 
+void init_qemu_socket(socket_t *sock_struct);
+void init_native_socket(socket_t *sock_struct);
+
 static int usage(const char *prog_name);
 static int parse_address_spec(char* address_spec, uint32_t *listen_port,
                               char *target_ip, size_t target_ip_size,
@@ -54,67 +57,58 @@ int main(int argc, char *argv[])
     }
 
     if (!strncmp(argv[1], "in", 2)) {
-        s_listen.error   = s_in.error   = &qemu_errno;
-
-        s_listen.close   = s_in.close   = &qc_close;
-        s_listen.fcntl   = s_in.fcntl   = &qc_fcntl;
-
-        s_listen.socket  = s_in.socket  = &qc_socket;
-        s_listen.accept  = s_in.accept  = &qc_accept;
-        s_listen.bind    = s_in.bind    = &qc_bind;
-        s_listen.connect = s_in.connect = &qc_connect;
-        s_listen.listen  = s_in.listen  = &qc_listen;
-        s_listen.recv    = s_in.recv    = &qc_recv;
-        s_listen.send    = s_in.send    = &qc_send;
-
-        s_out.error   = &errno;
-
-        s_out.close   = &close;
-        s_out.fcntl   = &fcntl;
-
-        s_out.socket  = &socket;
-        s_out.accept  = &accept;
-        s_out.bind    = &bind;
-        s_out.connect = &connect;
-        s_out.listen  = &listen;
-        s_out.recv    = &recv;
-        s_out.send    = &send;
+        init_qemu_socket(&s_listen);
+        init_qemu_socket(&s_in);
+        init_native_socket(&s_out);
 
         return tunnel(&s_listen, &s_in, &s_out, listen_port, target_ip,
                       target_port);
     } else if (!strncmp(argv[1], "out", 3)) {
-        s_listen.error   = s_in.error   = &errno;
-
-        s_listen.close   = s_in.close   = &close;
-        s_listen.fcntl   = s_in.fcntl   = &fcntl;
-
-        s_listen.socket  = s_in.socket  = &socket;
-        s_listen.accept  = s_in.accept  = &accept;
-        s_listen.bind    = s_in.bind    = &bind;
-        s_listen.connect = s_in.connect = &connect;
-        s_listen.listen  = s_in.listen  = &listen;
-        s_listen.recv    = s_in.recv    = &recv;
-        s_listen.send    = s_in.send    = &send;
-
-        s_out.error   = &qemu_errno;
-
-        s_out.close   = &qc_close;
-        s_out.fcntl   = &qc_fcntl;
-
-        s_out.socket  = &qc_socket;
-        s_out.accept  = &qc_accept;
-        s_out.bind    = &qc_bind;
-        s_out.connect = &qc_connect;
-        s_out.listen  = &qc_listen;
-        s_out.recv    = &qc_recv;
-        s_out.send    = &qc_send;
+        init_native_socket(&s_listen);
+        init_native_socket(&s_in);
+        init_qemu_socket(&s_out);
 
         return tunnel(&s_listen, &s_in, &s_out, listen_port, target_ip,
                       target_port);
     } else {
         return usage(argv[0]);
     }
+}
 
+void init_qemu_socket(socket_t *sock_struct)
+{
+    if (sock_struct) {
+        sock_struct->error   = &qemu_errno;
+
+        sock_struct->close   = &qc_close;
+        sock_struct->fcntl   = &qc_fcntl;
+
+        sock_struct->socket  = &qc_socket;
+        sock_struct->accept  = &qc_accept;
+        sock_struct->bind    = &qc_bind;
+        sock_struct->connect = &qc_connect;
+        sock_struct->listen  = &qc_listen;
+        sock_struct->recv    = &qc_recv;
+        sock_struct->send    = &qc_send;
+    }
+}
+
+void init_native_socket(socket_t *sock_struct)
+{
+    if (sock_struct) {
+        sock_struct->error   = &errno;
+
+        sock_struct->close   = &close;
+        sock_struct->fcntl   = &fcntl;
+
+        sock_struct->socket  = &socket;
+        sock_struct->accept  = &accept;
+        sock_struct->bind    = &bind;
+        sock_struct->connect = &connect;
+        sock_struct->listen  = &listen;
+        sock_struct->recv    = &recv;
+        sock_struct->send    = &send;
+    }
 }
 
 static int usage(const char *prog_name)
