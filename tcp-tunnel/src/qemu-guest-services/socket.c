@@ -28,7 +28,7 @@ static int qemu_sckt_call(qemu_call_t *qcall)
 {
     qemu_call(qcall);
 
-    qemu_errno = qcall->error;
+    guest_svcs_errno = qcall->error;
     return (int) qcall->retval;
 }
 

@@ -24,7 +24,7 @@
 
 #include "hw/arm/guest-services/general.h"
 
-int32_t qemu_errno = 0;
+int32_t guest_svcs_errno = 0;
 
 void qemu_call(qemu_call_t *qcall)
 {

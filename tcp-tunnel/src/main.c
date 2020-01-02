@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 static void init_qemu_socket(socket_t *sock_struct)
 {
     if (sock_struct) {
-        sock_struct->error   = &qemu_errno;
+        sock_struct->error   = &guest_svcs_errno;
 
         sock_struct->close   = &qc_close;
         sock_struct->fcntl   = &qc_fcntl;
