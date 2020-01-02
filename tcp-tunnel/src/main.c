@@ -330,7 +330,7 @@ static int tunnel(socket_t *s_listen, socket_t *in, socket_t *out,
     }
 
     for (;;) {
-        // Wait for an incoming connection...s
+        // Wait for an incoming connection...
         in->fd = s_listen->accept(s_listen->fd, (struct sockaddr*) &remote,
                                   &remotelen);
 
