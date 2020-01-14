@@ -9,5 +9,7 @@ void _start() {
     char str[] = "Hello, PIC world!";
     char *buf = kern_os_malloc(sizeof(str));
 
+    memcpy(&str[7], "iOS", 3);
     memcpy(buf, str, strlen(str));
+
 }

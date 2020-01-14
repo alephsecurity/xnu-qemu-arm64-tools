@@ -12,7 +12,7 @@ TARGET = bin/pic
 CROSS = aarch64-none-elf-
 CC = $(CROSS)gcc
 OBJCOPY = $(CROSS)objcopy
-LDFLAGS = -Xlinker -T flat.ld -Xlinker -N
+LDFLAGS = -Wl,-T,flat.ld,-N
 DEFINES = -DBCM2837 -DKERNEL -DXNU_KERNEL_PRIVATE -D__arm64__ -D__LITTLE_ENDIAN__
 INCLUDES = -I$(XNU_SOURCES)/bsd \
 	-I$(XNU_SOURCES)/osfmk \
@@ -20,7 +20,7 @@ INCLUDES = -I$(XNU_SOURCES)/bsd \
 	-I$(XNU_SOURCES)/libkern \
 	-I$(XNU_SOURCES)/pexpert \
 	-I$(XNU_SOURCES)/EXTERNAL_HEADERS
-CFLAGS = -pie -nostdlib -nostartfiles $(DEFINES) $(LDFLAGS) $(INCLUDES)
+CFLAGS = -fPIC -fno-plt -nostdlib -nostartfiles $(DEFINES) $(LDFLAGS) $(INCLUDES)
 	
 
 $(TARGET).bin: $(TARGET).elf
