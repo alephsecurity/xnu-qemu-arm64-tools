@@ -1,0 +1,5 @@
+bin/*
+.vscode
+kernel.ld
+*.swp
+*.un~
