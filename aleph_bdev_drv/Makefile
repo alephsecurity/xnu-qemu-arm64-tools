@@ -12,7 +12,7 @@ ifndef QEMU_DIR
 $(error QEMU_DIR is not set)
 endif
 
-TARGET = bin/pic
+TARGET = bin/aleph_bdev_drv
 CROSS = aarch64-none-elf-
 CC = $(CROSS)gcc
 OBJCOPY = $(CROSS)objcopy
