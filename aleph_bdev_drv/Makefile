@@ -25,7 +25,7 @@ INCLUDES = -I$(XNU_SOURCES)/bsd \
            -I$(XNU_SOURCES)/pexpert \
            -I$(XNU_SOURCES)/EXTERNAL_HEADERS \
            -I$(QEMU_DIR)/include
-CFLAGS = -fPIC -fno-plt -nostdlib -nostartfiles $(DEFINES) $(LDFLAGS) $(INCLUDES)
+CFLAGS = -fpie -flto -fwhole-program -fno-plt -nostdlib -nostartfiles $(DEFINES) $(LDFLAGS) $(INCLUDES)
 
 $(TARGET).bin: $(TARGET).elf
 	@echo "Creating a flat binary..."
