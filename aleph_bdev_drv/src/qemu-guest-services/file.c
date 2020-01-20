@@ -46,10 +46,10 @@ int64_t qc_write_file(void *buffer_guest_ptr, uint64_t length,
 {
     qemu_call_t qcall = {
         .call_number = QC_WRITE_FILE,
-        .args.read_file.buffer_guest_ptr = (uint64_t)buffer_guest_ptr,
-        .args.read_file.length = length,
-        .args.read_file.offset = offset,
-        .args.read_file.index = index,
+        .args.write_file.buffer_guest_ptr = (uint64_t)buffer_guest_ptr,
+        .args.write_file.length = length,
+        .args.write_file.offset = offset,
+        .args.write_file.index = index,
     };
 
     return qemu_file_call(&qcall);
