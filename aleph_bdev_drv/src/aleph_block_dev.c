@@ -132,7 +132,7 @@ uint64_t AlephBlockDevice_doAsyncReadWrite(void *this, void **buffer,
             if ((offset + length) > members->size) {
                 length = members->size - offset;
             }
-            if ((offset + length) > members->size - BLOCK_SIZE) {
+            if ((offset + length) >= members->size + BLOCK_SIZE) {
                 cancel();
             }
 
@@ -147,7 +147,7 @@ uint64_t AlephBlockDevice_doAsyncReadWrite(void *this, void **buffer,
             if ((offset + length) > members->size) {
                 length = members->size - offset;
             }
-            if ((offset + length) > members->size - BLOCK_SIZE) {
+            if ((offset + length) >= members->size + BLOCK_SIZE) {
                 cancel();
             }
 
