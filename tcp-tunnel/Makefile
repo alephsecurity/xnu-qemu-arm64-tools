@@ -20,7 +20,7 @@ bin/tunnel: $(src)
 	$(CC) -o $@ $(FLAGS) $^
 	jtool --sign --ent ent.xml --inplace $@
 	jtool --sig --ent $@ | grep CDHash | cut -d' ' -f6 | cut -c 1-40 >> $(IOS_DIR)/tchashes
-	python $(IOS_DIR)/xnu-qemu-arm64-scripts/create_trustcache.py $(IOS_DIR)/tchashes $(IOS_DIR)/static_tc
+	python $(IOS_DIR)/xnu-qemu-arm64-tools/create_trustcache.py $(IOS_DIR)/tchashes $(IOS_DIR)/static_tc
 
 .PHONY: clean
 clean:
