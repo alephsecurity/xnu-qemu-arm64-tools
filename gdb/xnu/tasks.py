@@ -18,6 +18,10 @@ class PrintThreadList(gdb.Command):
         All threads whithin the system - xnu-threads
         All threads of specific task - xnu-threads ${task_ptr}
         """
+        if sys_info.is_in_kernel_space() is False:
+            gdb.write("\nYou are currently in user space, "\
+                "this functionality is not available here.\n\n")
+            return        
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 0:
@@ -69,6 +73,10 @@ class PrintTaskList(gdb.Command):
 
     def invoke(self, arg, from_tty):
         """ Go over task iterator and print all task data """
+        if sys_info.is_in_kernel_space() is False:
+            gdb.write("\nYou are currently in user space, "\
+                "this functionality is not available here.\n\n")
+            return
         try:
             max_length_proc = types.get_max_length_proc_name()
             for task in iter(types.TasksIterator()):
@@ -88,6 +96,10 @@ class PrintThreadInfo(gdb.Command):
 
     def invoke(self, arg, from_tty):
         """ print info of given thread, checking if exist"""
+        if sys_info.is_in_kernel_space() is False:
+            gdb.write("\nYou are currently in user space, "\
+                "this functionality is not available here.\n\n")
+            return
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1:
@@ -112,6 +124,10 @@ class PrintTaskInfo(gdb.Command):
 
     def invoke(self, arg, from_tty):
         """ print info of given task, checking if exist"""
+        if sys_info.is_in_kernel_space() is False:
+            gdb.write("\nYou are currently in user space, "\
+                "this functionality is not available here.\n\n")
+            return        
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1:
@@ -143,6 +159,10 @@ class PrintVoucherInfo(gdb.Command):
             "xnu-voucher-info", gdb.COMMAND_DATA)
 
     def invoke(self, arg, from_tty):
+        if sys_info.is_in_kernel_space() is False:
+            gdb.write("\nYou are currently in user space, "\
+                "this functionality is not available here.\n\n")
+            return        
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1 and sys_info.is_valid_ptr(int(argv[0], 0)):
@@ -168,6 +188,10 @@ class PrintIpcPortInfo(gdb.Command):
 
     def invoke(self, arg, from_tty):
         """ print info """
+        if sys_info.is_in_kernel_space() is False:
+            gdb.write("\nYou are currently in user space, "\
+                "this functionality is not available here.\n\n")
+            return         
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1 and sys_info.is_valid_ptr(int(argv[0], 0)):
@@ -195,6 +219,10 @@ class PrintIPCEntryList(gdb.Command):
 
     def invoke(self, arg, from_tty):
         """ Can get as argument pointer to task or pointer to space"""
+        if sys_info.is_in_kernel_space() is False:
+            gdb.write("\nYou are currently in user space, "\
+                "this functionality is not available here.\n\n")
+            return         
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 2 and sys_info.is_valid_ptr(int(argv[1], 0)):

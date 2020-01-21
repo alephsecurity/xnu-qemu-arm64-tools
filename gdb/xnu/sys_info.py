@@ -31,6 +31,12 @@ def is_valid_ptr(ptr):
     except Exception:
         raise gdb.GdbError(f"Wrong pointer! {hex(ptr)}")
 
+def is_in_kernel_space():
+    try:
+        utils.get_8_byte_at(const.GLOBAL_TASKS_PTR)
+        return True
+    except Exception:
+        return False
 
 class Symbols:
     """ until implemented in the gdb itself

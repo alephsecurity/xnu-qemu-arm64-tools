@@ -1,4 +1,5 @@
 import xnu.utils as utils
+import xnu.sys_info as sys_info
 import gdb
 
 
@@ -66,6 +67,10 @@ class PrintZoneInformationCommand(gdb.Command):
               self).__init__("xnu-zones", gdb.COMMAND_DATA)
 
     def invoke(self, arg, from_tty):
+        if sys_info.is_in_kernel_space() is False:
+            gdb.write("\nYou are currently in user space, "\
+                "this functionality is not available here.\n\n")
+            return         
         self.print_zones()
 
     def print_zones(self):
