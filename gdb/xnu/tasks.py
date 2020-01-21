@@ -41,9 +41,9 @@ class PrintThreadList(gdb.Command):
                                           f" in the tasks list of the system!\n\n\n")
                             self.print_all_threads(task=requested_task)
                     except Exception:
-                        gdb.GdbError(gdb.GdbError("wrong args"))
+                        gdb.write("\nUsage: xnu-threads ${TASK_PTR}\n")
             else:
-                raise gdb.GdbError("wrong args")
+               gdb.write("\nUsage: xnu-threads ${TASK_PTR}\n")
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
@@ -109,7 +109,7 @@ class PrintThreadInfo(gdb.Command):
                 else:
                     gdb.write("Given thread do not exist\n")
             else:
-                gdb.write("wrong args\n")
+                gdb.write("\nUsage: xnu-thread-info ${THREAD_PTR}\n")
         except  Exception:
             raise gdb.GdbError(traceback.format_exc())
 
@@ -140,7 +140,7 @@ class PrintTaskInfo(gdb.Command):
                 else:
                     gdb.write("Given task do not exist\n")
             else:
-                gdb.write("wrong args\n")
+                gdb.write("\nUsage: xnu-task-info ${TASK_PTR}\n")
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
@@ -169,7 +169,8 @@ class PrintVoucherInfo(gdb.Command):
                 voucher = int(argv[0], 0)
                 gdb.write(types.ThreadVoucher(voucher).print_voucher_info()+'\n')
             else:
-                gdb.write("wrong args\n")
+                gdb.write("\nUsage: xnu-voucher-info ${THREAD_PTR} "\
+                    "(maybe wrong pointer?)\n")
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
@@ -198,7 +199,7 @@ class PrintIpcPortInfo(gdb.Command):
                 ipc_port = int(argv[0], 0)
                 gdb.write(types.IPCPort(ipc_port).print_ipc_port_info()+'\n')
             else:
-                gdb.write("wrong args\n")
+                gdb.write("\nUsage: xnu-ipc-port-info ${IPC_PORT_PTR}\n")
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
@@ -237,9 +238,11 @@ class PrintIPCEntryList(gdb.Command):
                     self.print_ipc_space_table(space)
                 else:
                     gdb.write(
-                        "wrong args, usage $ xnu-ipc_entry-list -task/table {PTR} \n")
+                        "\nUsage: xnu-ipc_entry-list -task/space"\
+                            " ${TASK_PTR}/${SPACE_PTR}\n")
             else:
-                gdb.write(f"wrong args\n")
+                gdb.write("\nUsage: xnu-ipc_entry-list -task/space"\
+                            " ${TASK_PTR}/${SPACE_PTR}\n")
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
