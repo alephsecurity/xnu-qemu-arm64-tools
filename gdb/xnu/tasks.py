@@ -13,19 +13,21 @@ class PrintThreadList(gdb.Command):
     def invoke(self, arg, from_tty):
         """ Parsing arguments, invoking printing.
         You can print all theeads of current task (no argument to command),
+        All threads of current task xnu-threads current
         All user threads - xnu-threads user
-        All threads whithin the system - xnu-threads global
+        All threads whithin the system - xnu-threads
         All threads of specific task - xnu-threads ${task_ptr}
         """
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 0:
-                self.print_all_threads()
+                self.print_all_threads(is_global=True)
             elif len(argv) == 1:
                 if argv[0] == "user":
                     self.print_all_threads(user_only=True, is_global=True)
-                elif argv[0] == "global":
-                    self.print_all_threads(is_global=True)
+                elif argv[0] == "current":
+                    task = sys_info.get_current_task_ptr()
+                    self.print_all_threads(task=task)
                 else:
                     try:
                         requested_task = int(argv[0], 0)

@@ -111,7 +111,7 @@ class Thread:
             res_str += f" [{self.task_object.bsdinfo_object.bsd_pid}] |"
             res_str += f" {self.task_object.bsdinfo_object.bsd_name:<{max_length_proc}} |"
         else:
-            res_str += f" [X]  |"
+            res_str += f" [X] |"
             res_str += f' {"N/A":<{max_length_proc}} |'
         res_str += f" {self.tid} | {hex(self.address)} |"
         res_str += f' {"N/A":^{max_length_cont}} |' if self.continuation == const.NULL_PTR \
@@ -524,7 +524,8 @@ class ThreadsIterator:
             if task != const.NULL_PTR and task is not None:
                 self.task_ptr = task
             else:
-                self.task_ptr = sys_info.get_current_task_ptr()
+                raise gdb.GdbError("ThreadsIterator: null task pointer!")
+
 
     def __iter__(self):
         if self.type == const.ThrdItrType.GLOBAL:
