@@ -20,7 +20,7 @@ After completing all steps described [here](https://alephsecurity.com/2019/06/17
 
 Show list of all threads
 ```shell
-  $ xnu-threads global
+  $ xnu-threads
 ```
 Show list of all tasks
 ```shell
@@ -32,7 +32,7 @@ Show list of all user threads
 ```
 Show list of current's task threads
 ```shell
-  $ xnu-threads
+  $ xnu-threads current
 ```
 Show threads of specific *task*
 ```shell
