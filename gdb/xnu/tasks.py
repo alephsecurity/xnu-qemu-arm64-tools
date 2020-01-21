@@ -68,8 +68,9 @@ class PrintTaskList(gdb.Command):
     def invoke(self, arg, from_tty):
         """ Go over task iterator and print all task data """
         try:
+            max_length_proc = types.get_max_length_proc_name()
             for task in iter(types.TasksIterator()):
-                gdb.write(task.print_task_info_short()+'\n')
+                gdb.write(task.print_task_info_short(max_length_proc)+'\n')
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 

@@ -24,6 +24,8 @@ class Thread:
             self.voucher_ptr = utils.get_8_byte_at(
                 address + const.ThreadOffsets.VOUCHER_PTR.value)
 
+            self.initialized = True
+
             # Meta Data
             self.next_pc = const.NULL_PTR
             if self.is_currect():
@@ -36,7 +38,8 @@ class Thread:
 
             self.task_object = Task(self.task_ptr)
         else:
-            raise gdb.GdbError(f"Null pointer in {__name__}")
+            self.initialized = False
+            #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
 
     # we cheating here.
     # the context switch happens in Switch_context function,
@@ -52,6 +55,8 @@ class Thread:
     # If not we will return the next pc (LR) to be called.
     # if the next function is exeption_return we will go one more frame further.
     def get_kernel_next_pc(self):
+        if self.initialized is False or self.kernel_stack_ptr == const.NULL_PTR:
+            return const.NULL_PTR
         # Get SP of thread_invoke. From Switch_context's frame
         kernel_saved_state = ThreadSavedState(self.kernel_stack_ptr)
         stack_ptr_thread_invoke = kernel_saved_state.sp
@@ -84,6 +89,8 @@ class Thread:
             next_x21_ptr = utils.get_8_byte_at(
                 stack_ptr_thread_invoke + const.NextPcHelpOffsets.THREAD_INVOKE_FRAME_SIZE.value +
                 const.NextPcHelpOffsets.X21_IN_THREAD_INVOKE_FRAME.value)
+            if next_x21_ptr == const.NULL_PTR:
+                return const.NULL_PTR
             saved_state_exception_return = ThreadSavedState(next_x21_ptr)
             # now we have the saved state we can get the PC
             pc_from_saved_state = saved_state_exception_return.pc
@@ -91,13 +98,21 @@ class Thread:
         return kernel_next_pc
 
     def print_thead_info_short(self, max_length_proc, max_length_cont, max_length_pc):
+        if self.initialized is False:
+            return ""
+
         res_str = ""
         is_user = (self.ucontext_data != const.NULL_PTR)
         is_current = (self.address == sys_info.get_current_thread_ptr())
         res_str += '*' if is_current else ' '
         res_str += 'U |' if is_user else 'K |'
-        res_str += f" [{self.task_object.bsdinfo_object.bsd_pid}] |"
-        res_str += f" {self.task_object.bsdinfo_object.bsd_name:<{max_length_proc}} |"
+        if self.task_object.initialized is True and \
+            self.task_object.bsdinfo_object.initialized is True:
+            res_str += f" [{self.task_object.bsdinfo_object.bsd_pid}] |"
+            res_str += f" {self.task_object.bsdinfo_object.bsd_name:<{max_length_proc}} |"
+        else:
+            res_str += f" [X]  |"
+            res_str += f' {"N/A":<{max_length_proc}} |'
         res_str += f" {self.tid} | {hex(self.address)} |"
         res_str += f' {"N/A":^{max_length_cont}} |' if self.continuation == const.NULL_PTR \
             else f" {sys_info.get_symbol(hex(self.continuation)):^{max_length_cont}} |"
@@ -107,6 +122,8 @@ class Thread:
         return res_str
 
     def print_thread_info_long(self):
+        if self.initialized is False:
+            return ""
         res_str = "\n"
         if sys_info.is_user_thread(self):
             res_str += "This is a user space thread\n\n"
@@ -144,6 +161,8 @@ class Thread:
         return res_str
 
     def is_currect(self):
+        if self.initialized is False:
+            return False
         return self.address == sys_info.get_current_thread_ptr()
 
 
@@ -155,10 +174,10 @@ class BsdInfo:
                 address + const.BSDInfoOffsets.PID_IN_BSD_INFO.value)
             self.bsd_name = utils.get_string_at(
                 address + const.BSDInfoOffsets.NAME_INBSD_INFO.value)
+            self.initialized = True
         else:
-            raise gdb.GdbError(f"Null pointer in {__name__}")
-
-
+            self.initialized = False
+            #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
 
 # ipc_space
 class IPCSpace:
@@ -170,10 +189,14 @@ class IPCSpace:
                 address + const.IPCSpaceOffsets.IS_TABLE_SIZE.value)
             self.is_table_free = utils.get_4_byte_at(
                 address + const.IPCSpaceOffsets.IS_TABLE_FREE.value)
+            self.initialized = True
         else:
-            raise gdb.GdbError(f"Null pointer for {__name__}")
+            self.initialized = False
+            #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
 
     def print_ipc_space_info(self):
+        if self.initialized is False:
+            return ""
         res_str = "\n"
         res_str += f"ipc_space->is_table: {hex(self.is_table)}\n"
         res_str += f"ipc_space->is_table_size: {self.is_table_size} - (first reserved)\n"
@@ -195,10 +218,14 @@ class IPCEntry:
 
             if self.ie_object:
                 self.ie_object_object = IPCObject(self.ie_object)
+            self.initialized = True
         else:
-            raise gdb.GdbError(f"Wrong pointer to IPC Entry {address}")
+            self.initialized = False
+            #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
 
     def print_ipc_entry_info(self):
+        if self.initialized is False:
+            return ""
         res_str = "\n"
         res_str += f"ipc_entry->ie_object: {utils.print_ptr_as_string(self.ie_object)}\n"
         res_str += f"ipc_entry->ie_bits: {hex(self.ie_bits)}\n"
@@ -218,10 +245,14 @@ class IPCObject:
                 address + const.IPCObjectOffsets.IO_LOCK_DATA.value)
             self.io_lock_data_2 = utils.get_8_byte_at(
                 address + const.IPCObjectOffsets.IO_LOCK_DATA.value + 0x08)  # next
+            self.initialized = True
         else:
-            raise gdb.GdbError(f"Wrong pointer to IPC Object {address}")
+            self.initialized = False
+            #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
 
     def print_ipc_object_info(self):
+        if self.initialized is False:
+            return ""
         res_str = "\n"
         res_str += f"ip_object->io_bits: "\
                 f"{const.IO_BITS_TYPES[self.io_bits & const.IO_BITS_KOTYPE]}\n"
@@ -261,8 +292,14 @@ class IPCPort:
                 address + const.IPCPortOffsets.IP_SRIGHTS.value)
             self.ip_sorights = utils.get_4_byte_at(
                 address + const.IPCPortOffsets.IP_SORIGHTS.value)
+            self.initialized = True
+        else:
+            self.initialized = False
+            #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
 
     def print_ipc_port_info(self):
+        if self.initialized is False:
+            return ""
         res_str = "\n"
         res_str += f"ipc_port->ip_object.io_bits: "\
                 f"{const.IO_BITS_TYPES[self.ip_object_object.io_bits & const.IO_BITS_KOTYPE]}\n"
@@ -307,23 +344,34 @@ class Task:
 
             self.ipc_space_object = IPCSpace(self.ipc_space)
             self.bsdinfo_object = BsdInfo(self.bsd_info_ptr)
+            self.initialized = True
         else:
-            raise gdb.GdbError(f"Null pointer in {__name__}")
+            self.initialized = False
+            #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
 
-    def print_task_info_short(self):
+    def print_task_info_short(self, max_length_proc):
+        if self.initialized is False:
+            return ""
         res_str = ""
         is_current = (self.address == sys_info.get_current_task_ptr())
         res_str += '*' if is_current else ' '
-        res_str += f" [{self.bsdinfo_object.bsd_pid}] | {self.bsdinfo_object.bsd_name:<15} |"
+        if self.bsdinfo_object.initialized is True:
+            res_str += f" [{self.bsdinfo_object.bsd_pid:^2}] | "\
+                f"{self.bsdinfo_object.bsd_name:<{max_length_proc}} |"
+        else:
+            res_str += f" [{'X':^2}] | {'N/A':<{max_length_proc}} |"
         res_str += f"  {hex(self.address)} "
 
         return res_str
 
     def print_task_info_long(self):
+        if self.initialized is False:
+            return ""
         res_str = "\n"
         res_str += f"task->bsd_info: {utils.print_ptr_as_string(self.bsd_info_ptr)}\n"
-        res_str += f"task->bsd_info->p_name: {self.bsdinfo_object.bsd_name}\n"
-        res_str += f"task->bsd_info->p_pid: {hex(self.bsdinfo_object.bsd_pid)}\n"
+        if self.bsdinfo_object.initialized is True:
+            res_str += f"task->bsd_info->p_name: {self.bsdinfo_object.bsd_name}\n"
+            res_str += f"task->bsd_info->p_pid: {hex(self.bsdinfo_object.bsd_pid)}\n"
         res_str += f"task->itk_self: {utils.print_ptr_as_string(self.itk_self)}\n"
         res_str += f"task->ipc_space: {utils.print_ptr_as_string(self.ipc_space)}\n"
         res_str += f"task->ipc_space->is_table: "\
@@ -376,7 +424,14 @@ class ThreadSavedState:
             self._esr = utils.get_4_byte_at(address + 0x118)
             self._exception = utils.get_4_byte_at(address + 0x11c)
 
+            self.initialized = True
+        else:
+            self.initialized = False
+            #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
+
     def print_saved_state(self, previous_struct):
+        if self.initialized is False:
+            return ""
         res_str = ""
         res_str += f"{previous_struct}->x0: {utils.print_ptr_as_string(self._x0)}\n"
         res_str += f"{previous_struct}->x1: {utils.print_ptr_as_string(self._x1)}\n"
@@ -435,7 +490,14 @@ class ThreadVoucher:
             self.iv_port = utils.get_8_byte_at(address + 0x38)
             self.iv_hash_link = utils.get_8_byte_at(address + 0x40)
 
+            self.initialized = True
+        else:
+            self.initialized = False
+            #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
+
     def print_voucher_info(self):
+        if self.initialized is False:
+            return ""
         res_str = "\n"
         res_str += f"ipc_voucher->iv_hash: {hex(self.iv_hash)}\n"
         res_str += f"ipc_voucher->iv_sum: {hex(self.iv_sum)}\n"
@@ -540,7 +602,8 @@ def is_thread_exist(thread):
 def get_max_length_proc_name():
     max_length = 0
     for task in iter(TasksIterator()):
-        if len(task.bsdinfo_object.bsd_name) > max_length:
+        if task.bsdinfo_object.initialized is True and \
+            len(task.bsdinfo_object.bsd_name) > max_length:
             max_length = len(task.bsdinfo_object.bsd_name)
     return max_length
 
