@@ -93,12 +93,14 @@ uint64_t AlephBlockDevice_somefunc3(void *this, char *param)
 
 char *AlephBlockDevice_getVendorString(void *this)
 {
-    return "Aleph";
+    AlephBDevMembers *members = get_bdev_members(this);
+    return &members->vendor_name[0];
 }
 
 char *AlephBlockDevice_getProductString(void *this)
 {
-    return "AlephStorageBlockDev";
+    AlephBDevMembers *members = get_bdev_members(this);
+    return &members->product_name[0];
 }
 
 uint64_t AlephBlockDevice_doAsyncReadWrite(void *this, void **buffer,
@@ -136,7 +138,7 @@ uint64_t AlephBlockDevice_doAsyncReadWrite(void *this, void **buffer,
                 cancel();
             }
 
-            qc_read_file(dev_buf, length, offset, 0);
+            qc_read_file(dev_buf, length, offset, members->qc_file_index);
             byte_count += write_bytes_f(buffer, (i * BLOCK_SIZE),
                                         dev_buf, length);
         }
@@ -153,7 +155,7 @@ uint64_t AlephBlockDevice_doAsyncReadWrite(void *this, void **buffer,
 
             byte_count += read_bytes_f(buffer, (i * BLOCK_SIZE),
                                        dev_buf, length);
-            qc_write_file(dev_buf, length, offset, 0);
+            qc_write_file(dev_buf, length, offset, members->qc_file_index);
         }
     } else {
         cancel();

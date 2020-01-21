@@ -12,12 +12,16 @@ ifndef QEMU_DIR
 $(error QEMU_DIR is not set)
 endif
 
+ifndef NUM_BLOCK_DEVS
+$(error NUM_BLOCK_DEVS is not set)
+endif
+
 TARGET = bin/aleph_bdev_drv
 CROSS = aarch64-none-elf-
 CC = $(CROSS)gcc
 OBJCOPY = $(CROSS)objcopy
 LDFLAGS = -Wl,-T,flat.ld,-N
-DEFINES = -DOUT_OF_TREE_BUILD -DBCM2837 -DKERNEL -DXNU_KERNEL_PRIVATE -D__arm64__ -D__LITTLE_ENDIAN__
+DEFINES = -DOUT_OF_TREE_BUILD -DBCM2837 -DKERNEL -DXNU_KERNEL_PRIVATE -D__arm64__ -D__LITTLE_ENDIAN__ -DNUM_BLOCK_DEVS=$(NUM_BLOCK_DEVS)
 INCLUDES = -I$(XNU_SOURCES)/bsd \
            -I$(XNU_SOURCES)/osfmk \
            -I$(XNU_SOURCES)/osfmk/libsa \

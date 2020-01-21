@@ -33,11 +33,17 @@
 
 #define BDEV_CLASS_NAME "AlephStorageBlockDevice"
 
+#define VENDOR_NAME_SIZE (64)
+
 typedef struct {
     void *mtx_grp;
     void *lck_mtx;
     uint64_t size;
     uint64_t block_count;
+    uint64_t qc_file_index;
+    char vendor_name[VENDOR_NAME_SIZE];
+    char product_name[VENDOR_NAME_SIZE];
+    char mutex_name[VENDOR_NAME_SIZE];
 } AlephBDevMembers;
 
 AlephBDevMembers *get_bdev_members(void *bdev);

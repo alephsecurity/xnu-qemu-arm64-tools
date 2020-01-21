@@ -30,11 +30,18 @@
 
 #include "hw/arm/guest-services/general.h"
 
+#define NUM_BLOCK_DEVS_MAX (10)
+
+#ifndef NUM_BLOCK_DEVS
+#define NUM_BLOCK_DEVS (2)
+#endif
+
 void _start() __attribute__((section(".start")));
 
 static uint8_t executed = 0;
 
 void _start() {
+    uint64_t i = 0;
     //in case the hook gets called more than once we want to make sure
     //it starts only once
     if (executed) {
@@ -42,22 +49,11 @@ void _start() {
     }
     executed = 1;
 
-    register_bdev_meta_class();
-    void *bdev = OSMetaClass_allocClassWithName(BDEV_CLASS_NAME);
-    if (NULL == bdev) {
+    if (NUM_BLOCK_DEVS > NUM_BLOCK_DEVS_MAX) {
         cancel();
     }
-    void **vtable_ptr = (void **)*(uint64_t *)bdev;
 
-    FuncIOStorageBdevInit vfunc_init =
-                (FuncIOStorageBdevInit)vtable_ptr[IOSTORAGEBDEV_INIT_INDEX];
-    vfunc_init(bdev, NULL);
-
-    AlephBDevMembers *members = get_bdev_members(bdev);
-    members->mtx_grp = lck_grp_alloc_init("AlephStorageDevMtx", NULL);
-    members->lck_mtx = lck_mtx_alloc_init(members->mtx_grp, NULL);
-    members->size = qc_size_file(0);
-    members->block_count = (members->size + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    register_bdev_meta_class();
 
     void *match_dict = IOService_serviceMatching("AppleARMPE", NULL);
     void *service = waitForMatchingService(match_dict, 0);
@@ -65,9 +61,34 @@ void _start() {
         cancel();
     }
 
-    IOService_attach(bdev, service);
+    for (i = 0; i < NUM_BLOCK_DEVS; i++) {
+        void *bdev = OSMetaClass_allocClassWithName(BDEV_CLASS_NAME);
+        if (NULL == bdev) {
+            cancel();
+        }
+        void **vtable_ptr = (void **)*(uint64_t *)bdev;
 
-    FuncIOStorageBdevRegisterService vfunc_reg_service =
-        (FuncIOStorageBdevRegisterService)vtable_ptr[IOSTORAGEBDEV_REG_SERVICE_INDEX];
-    vfunc_reg_service(bdev, 0);
+        FuncIOStorageBdevInit vfunc_init =
+                    (FuncIOStorageBdevInit)vtable_ptr[IOSTORAGEBDEV_INIT_INDEX];
+        vfunc_init(bdev, NULL);
+
+        AlephBDevMembers *members = get_bdev_members(bdev);
+        members->qc_file_index = i;
+        memcpy(&members->product_name[0], "0AlephBDev", 11);
+        members->product_name[0] += i;
+        memcpy(&members->vendor_name[0], "0Aleph", 7);
+        members->vendor_name[0] += i;
+        memcpy(&members->mutex_name[0], "0AM", 4);
+        members->mutex_name[0] += i;
+        members->mtx_grp = lck_grp_alloc_init(&members->mutex_name[0], NULL);
+        members->lck_mtx = lck_mtx_alloc_init(members->mtx_grp, NULL);
+        members->size = qc_size_file(i);
+        members->block_count = (members->size + BLOCK_SIZE - 1) / BLOCK_SIZE;
+
+        IOService_attach(bdev, service);
+
+        FuncIOStorageBdevRegisterService vfunc_reg_service =
+            (FuncIOStorageBdevRegisterService)vtable_ptr[IOSTORAGEBDEV_REG_SERVICE_INDEX];
+        vfunc_reg_service(bdev, 0);
+    }
 }
