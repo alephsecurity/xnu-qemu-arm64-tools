@@ -55,13 +55,16 @@ void _start() {
 
     register_bdev_meta_class();
 
+    //TODO: release this object ref
     void *match_dict = IOService_serviceMatching("AppleARMPE", NULL);
+    //TODO: release this object ref
     void *service = waitForMatchingService(match_dict, 0);
     if (0 == service) {
         cancel();
     }
 
     for (i = 0; i < NUM_BLOCK_DEVS; i++) {
+        //TODO: release this object ref?
         void *bdev = OSMetaClass_allocClassWithName(BDEV_CLASS_NAME);
         if (NULL == bdev) {
             cancel();
@@ -90,5 +93,9 @@ void _start() {
         FuncIOStorageBdevRegisterService vfunc_reg_service =
             (FuncIOStorageBdevRegisterService)vtable_ptr[IOSTORAGEBDEV_REG_SERVICE_INDEX];
         vfunc_reg_service(bdev, 0);
+
+        //TODO: hack for now to make the first registered bdev disk0 instead
+        //of having the system change the order
+        IOSleep(100);
     }
 }

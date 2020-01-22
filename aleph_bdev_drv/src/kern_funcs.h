@@ -89,6 +89,9 @@ uint64_t _ZN9IOService6attachEPS_(void *this, void *parent);
 //void _IOLog(undefined8 param_1)
 void IOLog(const char* fmt, ...);
 
+//void _IOSleep(undefined8 param_1)
+void IOSleep(uint64_t millisecs);
+
 void lck_mtx_lock(void *lck_mtx);
 void lck_mtx_unlock(void *lck_mtx);
 void *lck_grp_alloc_init(char *name, void *p2);
