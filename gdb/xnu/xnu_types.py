@@ -134,10 +134,10 @@ class Thread:
             if self.next_pc != const.NULL_PTR else ""
         res_str += f"thread->task: " \
                 f"{utils.print_ptr_as_string(self.task_ptr)}\n"
-        if self.task_object:
+        if self.task_object.initialized is True:
             res_str += f"thread->task->bsd_info: "\
                 f"{utils.print_ptr_as_string(self.task_object.bsd_info_ptr)}\n"
-        if self.task_object.bsd_info_ptr:
+        if self.task_object.initialized is True:
             res_str += f"thread->task->bsd_info->p_name: "\
                 f"{self.task_object.bsdinfo_object.bsd_name}\n"
             res_str += f"thread->task->bsd_info->p_pid: "\
@@ -301,14 +301,15 @@ class IPCPort:
         if self.initialized is False:
             return ""
         res_str = "\n"
-        res_str += f"ipc_port->ip_object.io_bits: "\
-                f"{const.IO_BITS_TYPES[self.ip_object_object.io_bits & const.IO_BITS_KOTYPE]}\n"
-        res_str += f"ipc_port->ip_object.io_references: "\
-            f"{hex(self.ip_object_object.io_references)}\n"
-        res_str += f"ipc_port->ip_object.io_lock_data[0]: "\
-            f"{hex(self.ip_object_object.io_lock_data_1)}\n"
-        res_str += f"ipc_port->ip_object.io_lock_data[1]: "\
-            f"{hex(self.ip_object_object.io_lock_data_2)}\n"
+        if self.ip_object_object.initialized is True:
+            res_str += f"ipc_port->ip_object.io_bits: "\
+                    f"{const.IO_BITS_TYPES[self.ip_object_object.io_bits & const.IO_BITS_KOTYPE]}\n"
+            res_str += f"ipc_port->ip_object.io_references: "\
+                f"{hex(self.ip_object_object.io_references)}\n"
+            res_str += f"ipc_port->ip_object.io_lock_data[0]: "\
+                f"{hex(self.ip_object_object.io_lock_data_1)}\n"
+            res_str += f"ipc_port->ip_object.io_lock_data[1]: "\
+                f"{hex(self.ip_object_object.io_lock_data_2)}\n"
         res_str += f"ipc_port->ip_messages: {self.ip_messages }\n"
         res_str += f"ipc_port->data: {utils.print_ptr_as_string(self.data) }\n"
         res_str += f"ipc_port->kdata: {utils.print_ptr_as_string(self.kdata) }\n"
@@ -374,8 +375,9 @@ class Task:
             res_str += f"task->bsd_info->p_pid: {hex(self.bsdinfo_object.bsd_pid)}\n"
         res_str += f"task->itk_self: {utils.print_ptr_as_string(self.itk_self)}\n"
         res_str += f"task->ipc_space: {utils.print_ptr_as_string(self.ipc_space)}\n"
-        res_str += f"task->ipc_space->is_table: "\
-                f"{utils.print_ptr_as_string(self.ipc_space_object.is_table)}\n"
+        if self.ipc_space_object.initialized is True:
+            res_str += f"task->ipc_space->is_table: "\
+                    f"{utils.print_ptr_as_string(self.ipc_space_object.is_table)}\n"
         return res_str
 
 # Saved State
