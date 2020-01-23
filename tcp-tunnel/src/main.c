@@ -77,6 +77,7 @@ int main(int argc, char *argv[])
     memset(&action, 0, sizeof(struct sigaction));
     action.sa_handler = terminate;
     sigaction(SIGTERM, &action, NULL);
+    sigaction(SIGINT, &action, NULL);
 
 
     if (DIR_IN == direction) {
