@@ -41,7 +41,7 @@ so it will contain quite a bit of garbage after a while.
 
 A basic execution of the tunnel looks like this:
 
-```tunnel in 2222:127.0.0.1:22```
+```tunnel 2222:127.0.0.1:22```
 
 This will spawn an inward tunnel (from the outside world into the iOS system),
 that will forward connections to port 2222 on the host to port 22 on the iOS
@@ -55,7 +55,16 @@ directory, and that an SSH key has been generated and put into `/var/dropbear`.
 
 Alternatively, outward connections can be tunnelled, as well:
 
-```tunnel out 80:93.184.216.34:80```
+```tunnel out:80:93.184.216.34:80```
 
 The above command will allow connections from the iOS system on port 80 to
 `example.com`.
+
+The tunnel runs in the foreground. It can be shut down by pressing
+<kbd>Ctrl</kbd>+<kbd>C</kbd>. All open sockets and connections are properly
+closed upon shut down.
+
+If background operation is required, the tunnel can be executed with the `-d`
+(or `--daemonize`) command line argument (it must appear first, as the
+address spec is expected to be the last argument). This argument will cause the
+tunnel to fork into the background.
