@@ -11,6 +11,9 @@
 
 #include "hw/arm/guest-services/general.h"
 
+#define DIR_IN 1
+#define DIR_OUT 2
+
 typedef struct {
     int fd;
     int *error;
@@ -42,19 +45,31 @@ static int tunnel(socket_t *s_listen, socket_t *in, socket_t *out,
                   uint32_t listen_port, char *target_ip, uint32_t target_port);
 
 static socket_t s_listen = {.fd = -1}, s_in = {.fd = -1}, s_out = {.fd = -1};
+static int daemonize = 0;
 
 int main(int argc, char *argv[])
 {
     uint32_t listen_port = 0, target_port = 0;
     char target_ip[30];
     struct sigaction action;
+    int direction;
 
-    if (argc != 3) {
+    switch (argc) {
+    case 2:
+        break;
+    case 3:
+        if (!strncmp(argv[1], "-d", strlen("-d")) ||
+            !strncmp(argv[1], "--daemonize", strlen("--daemonize"))) {
+                daemonize = 1;
+                break;
+            }
+    default:
         return usage(argv[0]);
     }
 
-    if (parse_address_spec(argv[2], &listen_port, target_ip, sizeof(target_ip),
-                           &target_port) < 0)
+    direction = parse_address_spec(argv[argc - 1], &listen_port, target_ip,
+                                   sizeof(target_ip), &target_port);
+    if (direction < 0)
     {
         return usage(argv[0]);
     }
@@ -64,14 +79,14 @@ int main(int argc, char *argv[])
     sigaction(SIGTERM, &action, NULL);
 
 
-    if (!strncmp(argv[1], "in", 2)) {
+    if (DIR_IN == direction) {
         init_qemu_socket(&s_listen);
         init_qemu_socket(&s_in);
         init_native_socket(&s_out);
 
         return tunnel(&s_listen, &s_in, &s_out, listen_port, target_ip,
                       target_port);
-    } else if (!strncmp(argv[1], "out", 3)) {
+    } else if (DIR_OUT == direction) {
         init_native_socket(&s_listen);
         init_native_socket(&s_in);
         init_qemu_socket(&s_out);
@@ -141,7 +156,7 @@ static void terminate(int signum)
 
 static int usage(const char *prog_name)
 {
-    fprintf(stderr, "Usage: %s [in|out] listen-port:target-ip:target-port\n",
+    fprintf(stderr, "Usage: %s [-d|--daemonize] [<in|out>:]listen-port:target-ip:target-port\n",
             prog_name);
 
     return -1;
@@ -152,6 +167,17 @@ static int parse_address_spec(char* address_spec, uint32_t *listen_port,
                               uint32_t *target_port)
 {
     char *token = strtok(address_spec, ":");
+    int direction = DIR_IN;
+
+    if (NULL != token) {
+        if (!strncmp(token, "out", strlen("out"))) {
+            direction = DIR_OUT;
+            token = strtok(NULL, ":");
+        } else if (!strncmp(token, "in", strlen("in"))) {
+            direction = DIR_IN;
+            token = strtok(NULL, ":");
+        }
+    }
 
     if (NULL != token) {
         errno = 0;
@@ -180,9 +206,16 @@ static int parse_address_spec(char* address_spec, uint32_t *listen_port,
                     token);
             return -1;
         }
+
+        token = strtok(NULL, ":");
     }
 
-    return 0;
+    if (NULL != token) {
+        fprintf(stderr, "Garbage after address spec (%s)!\n", token);
+        return -1;
+    }
+
+    return direction;
 }
 
 static int send_receive(socket_t *in, socket_t *out)
@@ -320,13 +353,15 @@ static int tunnel(socket_t *s_listen, socket_t *in, socket_t *out,
         return -1;
     }
 
-    printf("Waiting for connections in the background...\n");
-    if ((process_id = fork()) < 0) {
-        fprintf(stderr, "Couldn't daemonize - continuing in foreground...\n");
-    } else if (process_id > 0) {
-        exit(0);
-    } else {
-        close(STDIN_FILENO);
+    if (daemonize) {
+        printf("Waiting for connections in the background...\n");
+        if ((process_id = fork()) < 0) {
+            fprintf(stderr, "Couldn't daemonize - continuing in foreground...\n");
+        } else if (process_id > 0) {
+            exit(0);
+        } else {
+            close(STDIN_FILENO);
+        }
     }
 
     for (;;) {
