@@ -2,6 +2,7 @@
 import traceback
 import xnu.xnu_types as types
 import xnu.sys_info as sys_info
+
 import gdb
 
 
@@ -87,6 +88,48 @@ class PrintTaskList(gdb.Command):
 
 PrintTaskList()
 
+class SwitchToThreadDummy(gdb.Command):
+    """Dump Linux tasks."""
+
+    def __init__(self):
+        super(SwitchToThreadDummy, self).__init__("xnu-switch", gdb.COMMAND_DATA)
+
+    def invoke(self, arg, from_tty):
+        if sys_info.is_in_kernel_space() is False:
+            gdb.write("\nYou are currently in user space, "\
+                "this functionality is not available here.\n\n")
+            return
+        argv = gdb.string_to_argv(arg)
+        if len(argv) == 0:
+            # print("No argument given switching to next scheduled thread")
+            self.switchToThread(None)
+        elif len(argv) == 1 and sys_info.is_valid_ptr(int(argv[0], 0)):
+            gdb.write(f"Waiting for {argv[0]} to be scheduled, may take a while...\n")
+            self.switchToThread(argv[0])
+        else:
+             gdb.write("put thread_ptr as argument or null\n")
+
+    def switchToThread(self,thread):
+        old_thread = sys_info.get_current_thread_ptr()
+        gdb.execute("disable br")
+        bp = gdb.Breakpoint('$TPIDR_EL1',gdb.BP_WATCHPOINT,internal=True)
+        bp.enabled = True
+        bp.silent = True
+        tries = 20
+        if thread == None:
+             gdb.execute("continue")
+        else:
+            while sys_info.get_current_thread_ptr() != thread and tries > 0:
+                gdb.execute("continue")
+                tries = tries - 1
+        if tries == 0:
+            gdb.write(f"Sorry the thread was not sceduled, still on {hex(old_thread)}\n")
+        else:
+             gdb.write(f"Current thread is: {hex(sys_info.get_current_thread_ptr())} old: {hex(old_thread)}\n")
+        bp.delete()
+        gdb.execute("enable br")
+
+SwitchToThreadDummy()
 
 class PrintThreadInfo(gdb.Command):
     """ gdb command to print all known info of specific thread """
