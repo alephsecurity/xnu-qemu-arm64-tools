@@ -109,8 +109,8 @@ class Thread:
         is_current = (self.address == sys_info.get_current_thread_ptr())
         res_str += '*' if is_current else ' '
         res_str += 'U |' if is_user else 'K |'
-        if self.task_object.initialized is True and \
-            self.task_object.bsdinfo_object.initialized is True:
+        if self.task_object.initialized is True and\
+                self.task_object.bsdinfo_object.initialized is True:
             res_str += f" [{self.task_object.bsdinfo_object.bsd_pid}] |"
             res_str += f" {self.task_object.bsdinfo_object.bsd_name:<{max_length_proc}} |"
         else:
@@ -135,7 +135,7 @@ class Thread:
 
         res_str += f"Next pc: {sys_info.get_symbol(hex(self.next_pc))}\n\n" \
             if self.next_pc != const.NULL_PTR else ""
-        res_str += f"thread->task: " \
+        res_str += f"thread->task: "\
                 f"{utils.print_ptr_as_string(self.task_ptr)}\n"
         if self.task_object.initialized is True:
             res_str += f"thread->task->bsd_info: "\
@@ -181,6 +181,7 @@ class BsdInfo:
         else:
             self.initialized = False
             #gdb.write(f"WARNING: null pointer in {__name__}: {self.__class__.__name__}\n")
+
 
 # ipc_space
 class IPCSpace:
@@ -258,7 +259,7 @@ class IPCObject:
             return ""
         res_str = "\n"
         res_str += f"ip_object->io_bits: "\
-                f"{const.IO_BITS_TYPES[self.io_bits & const.IO_BITS_KOTYPE]}\n"
+            f"{const.IO_BITS_TYPES[self.io_bits & const.IO_BITS_KOTYPE]}\n"
         res_str += f"ip_object->io_references: {hex(self.io_references)}\n"
         res_str += f"ip_object->io_lock_data[0]: {hex(self.io_lock_data_1)}\n"
         res_str += f"ip_object->io_lock_data[1]: {hex(self.io_lock_data_2)}\n"
@@ -306,7 +307,8 @@ class IPCPort:
         res_str = "\n"
         if self.ip_object_object.initialized is True:
             res_str += f"ipc_port->ip_object.io_bits: "\
-                    f"{const.IO_BITS_TYPES[self.ip_object_object.io_bits & const.IO_BITS_KOTYPE]}\n"
+                    f"{const.IO_BITS_TYPES[self.ip_object_object.io_bits & const.IO_BITS_KOTYPE]}"\
+                    "\n"
             res_str += f"ipc_port->ip_object.io_references: "\
                 f"{hex(self.ip_object_object.io_references)}\n"
             res_str += f"ipc_port->ip_object.io_lock_data[0]: "\
@@ -482,6 +484,7 @@ class ThreadSavedState:
 
 # Voucher
 
+
 #TODO offsets
 class ThreadVoucher:
     def __init__(self, address):
@@ -515,7 +518,6 @@ class ThreadVoucher:
         return res_str
 
 
-
 # THREAD ITERATOR
 class ThreadsIterator:
     def __init__(self, is_global=False, task=None):
@@ -530,7 +532,6 @@ class ThreadsIterator:
                 self.task_ptr = task
             else:
                 raise gdb.GdbError("ThreadsIterator: null task pointer!")
-
 
     def __iter__(self):
         if self.type == const.ThrdItrType.GLOBAL:
@@ -609,7 +610,7 @@ def get_max_length_proc_name():
     max_length = 0
     for task in iter(TasksIterator()):
         if task.bsdinfo_object.initialized is True and \
-            len(task.bsdinfo_object.bsd_name) > max_length:
+                len(task.bsdinfo_object.bsd_name) > max_length:
             max_length = len(task.bsdinfo_object.bsd_name)
     return max_length
 

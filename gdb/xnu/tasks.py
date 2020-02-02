@@ -21,9 +21,9 @@ class PrintThreadList(gdb.Command):
         All threads of specific task - xnu-threads ${task_ptr}
         """
         if sys_info.is_in_kernel_space() is False:
-            gdb.write("\nYou are currently in user space, "\
-                "this functionality is not available here.\n\n")
-            return        
+            gdb.write("\nYou are currently in user space, "
+                      "this functionality is not available here.\n\n")
+            return
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 0:
@@ -45,7 +45,7 @@ class PrintThreadList(gdb.Command):
                     except Exception:
                         gdb.write("\nUsage: xnu-threads ${TASK_PTR}\n")
             else:
-               gdb.write("\nUsage: xnu-threads ${TASK_PTR}\n")
+                gdb.write("\nUsage: xnu-threads ${TASK_PTR}\n")
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
@@ -76,8 +76,8 @@ class PrintTaskList(gdb.Command):
     def invoke(self, arg, from_tty):
         """ Go over task iterator and print all task data """
         if sys_info.is_in_kernel_space() is False:
-            gdb.write("\nYou are currently in user space, "\
-                "this functionality is not available here.\n\n")
+            gdb.write("\nYou are currently in user space, "
+                      "this functionality is not available here.\n\n")
             return
         try:
             max_length_proc = types.get_max_length_proc_name()
@@ -89,6 +89,7 @@ class PrintTaskList(gdb.Command):
 
 PrintTaskList()
 
+
 class switchThread(gdb.Command):
     """Dummy way to jump to specific thread."""
 
@@ -97,44 +98,46 @@ class switchThread(gdb.Command):
 
     def invoke(self, arg, from_tty):
         if sys_info.is_in_kernel_space() is False:
-            gdb.write("\nYou are currently in user space, "\
-                "this functionality is not available here.\n\n")
+            gdb.write("\nYou are currently in user space, "
+                      "this functionality is not available here.\n\n")
             return
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 0:
-                self.switch_to_thread(None,0)
+                self.switch_to_thread(None, 0)
             elif len(argv) == 2 and types.is_thread_exist(int(argv[0], 0)):
-                gdb.write(f"Waiting for {argv[0]} to be scheduled for "\
-                    f"{int(argv[1], 0)} retries, this may take a while...\n")
-                self.switch_to_thread(argv[0],int(argv[1], 0))
+                gdb.write(f"Waiting for {argv[0]} to be scheduled for "
+                          f"{int(argv[1], 0)} retries, this may take a while...\n")
+                self.switch_to_thread(argv[0], int(argv[1], 0))
             else:
                 gdb.write("USAGE: xnu-switch ${THREAD_PTR} ${NUM_OF_RETRIES}\n")
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
-    def switch_to_thread(self,thread,tries):
+    def switch_to_thread(self, thread, tries):
         old_thread = sys_info.get_current_thread_ptr()
         utils.disable_all_bp()
         bp = utils.conf_curr_thread_watchpoint()
         tmp_tries = tries
-        if thread == None:
-             utils.gdb_continue()
+        if thread is None:
+            utils.gdb_continue()
         else:
             while sys_info.get_current_thread_ptr() != thread and tmp_tries > 0:
                 utils.gdb_continue()
                 tmp_tries -= 1
-        if tmp_tries == 0 and thread != None:
-            gdb.write(f"The thread was not scheduled in last {tries} "\
-                f"context switches, we are still on {hex(old_thread)}\n")
+        if tmp_tries == 0 and thread is not None:
+            gdb.write(f"The thread was not scheduled in last {tries} context"
+                      f" switches, we are still on {hex(old_thread)}\n")
         else:
-            gdb.write(f"Current thread is: "\
-                f"{hex(sys_info.get_current_thread_ptr())} "\
-                    f"old: {hex(old_thread)}\n")
+            gdb.write(f"Current thread is: "
+                      f"{hex(sys_info.get_current_thread_ptr())} "
+                      f"old: {hex(old_thread)}\n")
         utils.delete_bp(bp)
         utils.enable_all_bp()
 
+
 switchThread()
+
 
 class PrintThreadInfo(gdb.Command):
     """ gdb command to print all known info of specific thread """
@@ -145,8 +148,8 @@ class PrintThreadInfo(gdb.Command):
     def invoke(self, arg, from_tty):
         """ print info of given thread, checking if exist"""
         if sys_info.is_in_kernel_space() is False:
-            gdb.write("\nYou are currently in user space, "\
-                "this functionality is not available here.\n\n")
+            gdb.write("\nYou are currently in user space, "
+                      "this functionality is not available here.\n\n")
             return
         try:
             argv = gdb.string_to_argv(arg)
@@ -158,7 +161,7 @@ class PrintThreadInfo(gdb.Command):
                     gdb.write("Given thread do not exist\n")
             else:
                 gdb.write("\nUsage: xnu-thread-info ${THREAD_PTR}\n")
-        except  Exception:
+        except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
 
@@ -173,13 +176,14 @@ class PrintTaskInfo(gdb.Command):
     def invoke(self, arg, from_tty):
         """ print info of given task, checking if exist"""
         if sys_info.is_in_kernel_space() is False:
-            gdb.write("\nYou are currently in user space, "\
-                "this functionality is not available here.\n\n")
-            return        
+            gdb.write("\nYou are currently in user space, "
+                      "this functionality is not available here.\n\n")
+            return
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1:
-                task = int(argv[0], 0) #convert to integer
+                """convert to integer"""
+                task = int(argv[0], 0)
                 if sys_info.is_valid_ptr(task):
                     if not types.is_task_exist(task):
                         gdb.write(f"\nRequested task {argv[0]} do not exist in the task "
@@ -208,17 +212,17 @@ class PrintVoucherInfo(gdb.Command):
 
     def invoke(self, arg, from_tty):
         if sys_info.is_in_kernel_space() is False:
-            gdb.write("\nYou are currently in user space, "\
-                "this functionality is not available here.\n\n")
-            return        
+            gdb.write("\nYou are currently in user space, "
+                      "this functionality is not available here.\n\n")
+            return
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1 and sys_info.is_valid_ptr(int(argv[0], 0)):
                 voucher = int(argv[0], 0)
                 gdb.write(types.ThreadVoucher(voucher).print_voucher_info()+'\n')
             else:
-                gdb.write("\nUsage: xnu-voucher-info ${THREAD_PTR} "\
-                    "(maybe wrong pointer?)\n")
+                gdb.write("\nUsage: xnu-voucher-info ${THREAD_PTR} "
+                          "(maybe wrong pointer?)\n")
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 
@@ -238,9 +242,9 @@ class PrintIpcPortInfo(gdb.Command):
     def invoke(self, arg, from_tty):
         """ print info """
         if sys_info.is_in_kernel_space() is False:
-            gdb.write("\nYou are currently in user space, "\
-                "this functionality is not available here.\n\n")
-            return         
+            gdb.write("\nYou are currently in user space, "
+                      "this functionality is not available here.\n\n")
+            return
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 1 and sys_info.is_valid_ptr(int(argv[0], 0)):
@@ -269,9 +273,9 @@ class PrintIPCEntryList(gdb.Command):
     def invoke(self, arg, from_tty):
         """ Can get as argument pointer to task or pointer to space"""
         if sys_info.is_in_kernel_space() is False:
-            gdb.write("\nYou are currently in user space, "\
-                "this functionality is not available here.\n\n")
-            return         
+            gdb.write("\nYou are currently in user space, "
+                      "this functionality is not available here.\n\n")
+            return
         try:
             argv = gdb.string_to_argv(arg)
             if len(argv) == 2 and sys_info.is_valid_ptr(int(argv[1], 0)):
@@ -286,11 +290,11 @@ class PrintIPCEntryList(gdb.Command):
                     self.print_ipc_space_table(space)
                 else:
                     gdb.write(
-                        "\nUsage: xnu-ipc_entry-list -task/space"\
-                            " ${TASK_PTR}/${SPACE_PTR}\n")
+                        "\nUsage: xnu-ipc_entry-list -task/space"
+                        " ${TASK_PTR}/${SPACE_PTR}\n")
             else:
-                gdb.write("\nUsage: xnu-ipc_entry-list -task/space"\
-                            " ${TASK_PTR}/${SPACE_PTR}\n")
+                gdb.write("\nUsage: xnu-ipc_entry-list -task/space"
+                          " ${TASK_PTR}/${SPACE_PTR}\n")
         except Exception:
             raise gdb.GdbError(traceback.format_exc())
 

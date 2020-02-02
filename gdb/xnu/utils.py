@@ -62,20 +62,25 @@ def check_arguments(size):
 def print_ptr_as_string(addr):
     return NULL_PTR_STR if not addr else f"0x{addr:016x}"
 
+
 def gdb_continue():
     gdb.execute("continue")
 
+
 def conf_curr_thread_watchpoint():
-    bp = gdb.Breakpoint('$TPIDR_EL1',gdb.BP_WATCHPOINT,internal=True)
+    bp = gdb.Breakpoint('$TPIDR_EL1', gdb.BP_WATCHPOINT, internal=True)
     bp.enabled = True
     bp.silent = True
     return bp
 
+
 def delete_bp(bp):
     bp.delete()
 
+
 def enable_all_bp():
     gdb.execute("enable br")
+
 
 def disable_all_bp():
     gdb.execute("disable br")
