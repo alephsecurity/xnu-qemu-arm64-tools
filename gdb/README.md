@@ -46,6 +46,14 @@ Show all parsed info of specific *task*
 ```shell
   $ xnu-task-info ${TASK_PTR}
 ```
+Break on next Context Switch
+```shell
+  $ xnu-switch
+```
+Break on specific thread within specified number of context switches
+```shell
+  $ xnu-switch ${THREAD_PTR} ${NUM_OF_RETRIES}
+```
 Print the metadata of all the kernel allocation zones
 ```shell
   $ xnu-zones
