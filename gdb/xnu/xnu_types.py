@@ -78,8 +78,11 @@ class Thread:
                 stack_ptr_thread_invoke +
                 const.NextPcHelpOffsets.THREAD_INVOKE_FRAME_SIZE.value + 0x48)
         else:
-            raise gdb.GdbError(
-                "Something went wrong with getting the next pc, maybe running on another kernel?")
+            gdb.write(
+                f"Something went wrong for thread {hex(self.address)} "
+                f"with getting the next pc, maybe in a middle of thread's "
+                f"create/exit")
+            return const.NULL_PTR
 
         # Now we can check whether the next running function is exception_return.
         # If so, we need to go one more frame further
