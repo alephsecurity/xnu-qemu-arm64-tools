@@ -16,7 +16,9 @@ ifndef NUM_BLOCK_DEVS
 $(error NUM_BLOCK_DEVS is not set)
 endif
 
-TARGET = bin/aleph_bdev_drv
+MKDIR_P = mkdir -p
+TARGET_DIR=bin
+TARGET = $(TARGET_DIR)/aleph_bdev_drv
 CROSS = aarch64-none-elf-
 CC = $(CROSS)gcc
 OBJCOPY = $(CROSS)objcopy
@@ -30,6 +32,11 @@ INCLUDES = -I$(XNU_SOURCES)/bsd \
            -I$(XNU_SOURCES)/EXTERNAL_HEADERS \
            -I$(QEMU_DIR)/include
 CFLAGS = -fpie -flto -fwhole-program -fno-plt -nostdlib -nostartfiles $(DEFINES) $(LDFLAGS) $(INCLUDES)
+
+default: $(TARGET_DIR) $(TARGET).bin
+
+$(TARGET_DIR):
+	@${MKDIR_P} $@
 
 $(TARGET).bin: $(TARGET).elf
 	@echo "Creating a flat binary..."
@@ -46,4 +53,4 @@ kernel.ld:
 .PHONY: clean
 clean:
 	rm kernel.ld
-	rm -f $(TARGET)*
+	rm -rf $(TARGET_DIR)*
