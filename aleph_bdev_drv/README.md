@@ -33,7 +33,7 @@ $ brew install aarch64-none-elf
 
 Import the `kernelcache.release.n66.out` binary
 ![](https://user-images.githubusercontent.com/9990629/74612553-fc269380-510e-11ea-98d0-ed7cd3ce948b.png)
-
+Import as single file
 ![](https://user-images.githubusercontent.com/9990629/74612596-57588600-510f-11ea-9832-8520572cc98e.png)
 Go to Window->Symbol Table. Select All. Export the symbols from the iOS Kernel into csv file (Can be done with Ghidra):
 ![](https://user-images.githubusercontent.com/9990629/74463818-16583b80-4e9b-11ea-99fc-1649fcc8df18.png)
