@@ -30,7 +30,11 @@ $ brew tap SergioBenitez/osxct
 $ brew install aarch64-none-elf
 ```
 5. To be able to use the functions from the iOS Kernel within the driver code, we need to link the driver along with the symbols from the kernel.
-Export the symbols from the iOS Kernel into csv file (Can be done with Ghidra):
+
+Import the `kernelcache.release.n66.out` binary
+![](https://user-images.githubusercontent.com/9990629/74609174-37659a00-50f0-11ea-9633-a85b32375092.png)
+
+Go to Window->Symbol Table. Export the symbols from the iOS Kernel into csv file (Can be done with Ghidra):
 ![](https://user-images.githubusercontent.com/9990629/74463818-16583b80-4e9b-11ea-99fc-1649fcc8df18.png)
 6. Create the Environment Variables
 ```
