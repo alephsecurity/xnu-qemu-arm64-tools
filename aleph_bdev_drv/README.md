@@ -41,14 +41,14 @@ Go to Window->Symbol Table. Select All. Export the symbols from the iOS Kernel i
 ![](https://user-images.githubusercontent.com/9990629/74463818-16583b80-4e9b-11ea-99fc-1649fcc8df18.png)
 6. Create the Environment Variables
 ```
-$ export XNU_SOURCES=path_dir_to_darwin-xnu
-$ export KERNEL_SYMBOLS_FILE=path_dir_to_symbols.csv
-$ export QEMU_DIR=path_dir_to_xnu-qemu-arm64
+$ export XNU_SOURCES=darwin-xnu
+$ export KERNEL_SYMBOLS_FILE=symbols.csv
+$ export QEMU_DIR=xnu-qemu-arm64
 $ export NUM_BLOCK_DEVS=2
 ```
 7. Build
 ```
-$ make
+$ make -C xnu-qemu-arm64-tools/aleph_bdev_drv
 ```
 
 The compilation process generated flat `bin/aleph_bdev_drv.bin` binary, the compiled code of the driver.
