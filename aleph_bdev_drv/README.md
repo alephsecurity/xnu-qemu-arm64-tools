@@ -29,15 +29,17 @@ $ git clone https://github.com/alephsecurity/xnu-qemu-arm64-tools.git
 $ brew tap SergioBenitez/osxct
 $ brew install aarch64-none-elf
 ```
-5. To be able to use the functions from the iOS Kernel within the driver code, we need to link the driver along with the symbols from the kernel.
+5. To be able to use the functions from the iOS Kernel within the driver code, we need to link the driver along with the symbols from the kernel. We will demonstrate it with Ghidra tool.
 
 Import the `kernelcache.release.n66.out` binary
+
 ![](https://user-images.githubusercontent.com/9990629/74612553-fc269380-510e-11ea-98d0-ed7cd3ce948b.png)
 
 Import as single file and analyze it
+
 ![](https://user-images.githubusercontent.com/9990629/74612596-57588600-510f-11ea-9832-8520572cc98e.png)
 
-Go to Window->Symbol Table. Select All. Export the symbols from the iOS Kernel into csv file (Can be done with Ghidra):
+Go to Window->Symbol Table. Select All. Export the symbols from the iOS Kernel into csv file:
 ![](https://user-images.githubusercontent.com/9990629/74463818-16583b80-4e9b-11ea-99fc-1649fcc8df18.png)
 
 Get the symbols from csv file
