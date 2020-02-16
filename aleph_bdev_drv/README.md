@@ -22,7 +22,7 @@ $ git clone https://github.com/alephsecurity/xnu-qemu-arm64.git
 ```
 3. Get the xnu-qemu-arm64-tools sources:
 ```
-$ git clone https://github.com/alephsecurity/xnu-qemu-arm64-tools-private.git
+$ git clone https://github.com/alephsecurity/xnu-qemu-arm64-tools.git
 ```
 4. Get the Cross Compiler for AARCH64. We will use the toolchain provided by @github/SergioBenitez:
 ```
