@@ -51,6 +51,6 @@ $ export NUM_BLOCK_DEVS=2
 $ make
 ```
 
-The compilation process generated `bin/aleph_bdev_drv.bin`, the flat compiled code of the driver.
+The compilation process generated flat `bin/aleph_bdev_drv.bin` binary, the compiled code of the driver.
 
 Now that we have the driver compiled we can use it by the hook mechanism implemented in the [alephsecurity/xnu-qemu-arm64](https://github.com/alephsecurity/xnu-qemu-arm64)
