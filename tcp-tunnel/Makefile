@@ -28,7 +28,7 @@ install: bin/$(TARGET)
 	@sudo cp $^ /Volumes/PeaceB16B92.arm64UpdateRamDisk/bin/
 	@hdiutil detach /Volumes/PeaceB16B92.arm64UpdateRamDisk
 	@echo "Signing with entitlements..."
-	@jtool --sign --ent ent.xml --inplace $@
-	@jtool --sig --ent $@ | grep CDHash | cut -d' ' -f6 | cut -c 1-40 >> $(IOS_DIR)/tchashes
+	@jtool --sign --ent ent.xml --inplace $^
+	@jtool --sig --ent $^ | grep CDHash | cut -d' ' -f6 | cut -c 1-40 >> $(IOS_DIR)/tchashes
 	@echo "Updating static trustcache..."
 	@python $(IOS_DIR)/xnu-qemu-arm64-tools/bootstrap_scripts/create_trustcache.py $(IOS_DIR)/tchashes $(IOS_DIR)/static_tc
