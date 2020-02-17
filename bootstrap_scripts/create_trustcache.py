@@ -5,7 +5,7 @@ import struct
 import urllib
 
 def create_tc(hashes):
-    tc = ""
+    tc = b""
 
     #number of trustcaches in the trust cache buffer
     tc += struct.pack("<I", 1)
@@ -35,7 +35,7 @@ def create_tc(hashes):
         hash_txt = hash_txt[:40]
 
         #write the hash itself
-        for i in xrange(5):
+        for i in range(5):
             four_bytes = hash_txt[i * 8 : (i + 1) * 8]
             number = int(four_bytes, 16)
             tc += struct.pack(">I", number)
