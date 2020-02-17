@@ -8,7 +8,7 @@
 Python scripts used for extract, decode, decompress the needed files to load the iOS kernel on QEMU.
 
 ## gdb ##
-GDB-Python scripts that enable to analyze the kernel in run time (print threads, tasks, etc)
+GDB-Python scripts that enable analysis of the kernel in run time (print threads, tasks, etc)
 
 ## ghidra ##
 Ghidra scripts that we wrote to ease the reverse engineering process.
