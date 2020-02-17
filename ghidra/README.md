@@ -1,16 +1,16 @@
 # GHIDRA- Color Executed Instructions
 
-Given a file with the QEMU CPU trace, color the instructions that were executed in the program
+Given a file with the QEMU CPU trace, color the instructions that were executed in the trace
 
 TL;DR:
-To get an CPU trace:
+To get a CPU trace:
 ```
 $qemu-system-aarch64 -d exec -D /tmp/qemu-trace.log ...
 ```
 - Ghidra-> CodeBrowser-> Window -> Script Manager
 - Find the script (filter by name) and run
 - Choose the log file (/tmp/qemu-trace.log)
-- To see better the actual flow of the program, it is better to use *Graph* window 
+- To see better the actual flow of the program, it is better to use the *Graph* window 
 intead of *Listing*
 ---
 This small script will color all executed instructions according to the provided trace log. That is, the previously executed program's flow will be available at any time it is needed during the reverse engineering task.
