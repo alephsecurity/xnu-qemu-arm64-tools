@@ -29,7 +29,7 @@ separated by a new line, create a static trust cache file (binary):*
 $ python create_trustcache.py list_of_hashes_filename output_tc_filename 
 ```
 ---
-- kernelcompressedextractmonitor.py - *extract secure monitor from the compressed kernel image:*
+- kernelcompressedextractmonitor.py - *extract the secure monitor from the compressed kernel image:*
 ```
 $ python kernelcompressedextractmonitor.py compressed_decoded_kernel_image_filename secure_monitor_output_filename
 ```
