@@ -17,7 +17,7 @@ optional, and defaults to `jb`.
 
 To use the project for SSH connections, the RAM disk image should contain the
 dropbear binary. The easiest way to obtain it is through iosbinpack. The
-Makefile assumes its extracted into a folder named `jb` (this can be changed
+Makefile assumes it's extracted into a folder named `jb` (this can be changed
 with the `IOSBINPACK_DIR` environment variable). Dropbear needs an SSH key to
 run correctly (it can generate those on the fly, but since the filesystem is
 mounted read-only, the workaround is to generate the key offline, and copy it
