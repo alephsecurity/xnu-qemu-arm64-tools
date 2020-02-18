@@ -1,5 +1,5 @@
 
-# xnu-qemu-arm64-tools-private
+# xnu-qemu-arm64-tools
 
 
 *This repository includes the tools we use to boot/debug iOS kernel above QEMU.*
