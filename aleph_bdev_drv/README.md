@@ -46,7 +46,7 @@ Go to Window->Symbol Table. Select All. Export the symbols from the iOS Kernel i
 6. Create the Environment Variables
 ```
 $ export XNU_SOURCES=full_path_to_darwin-xnu
-$ export KERNEL_SYMBOLS_FILE=full_path_to_symbols.scv
+$ export KERNEL_SYMBOLS_FILE=full_path_to_symbols.csv
 $ export QEMU_DIR=full_path_to_xnu-qemu-arm64
 $ export NUM_BLOCK_DEVS=2
 ```
