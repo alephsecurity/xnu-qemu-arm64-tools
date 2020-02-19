@@ -58,6 +58,6 @@ If background operation is required, the tunnel can be executed with the `-d`
 address spec is expected to be the last argument). This argument will cause the
 tunnel to fork into the background.
 
-[QEMU with iOS]: https://github.com/alephsecurity/xnu-qemu-arm64-private.git
+[QEMU with iOS]: https://github.com/alephsecurity/xnu-qemu-arm64.git
 [rootlessJB]: https://github.com/jakeajames/rootlessJB
 
