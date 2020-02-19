@@ -42,15 +42,11 @@ Import as single file and analyze it
 Go to Window->Symbol Table. Select All. Export the symbols from the iOS Kernel into csv file:
 ![](https://user-images.githubusercontent.com/9990629/74463818-16583b80-4e9b-11ea-99fc-1649fcc8df18.png)
 
-Get the symbols from csv file
-```
-python3 getsymbols.py symbols.csv kernel.ld
-```
 
 6. Create the Environment Variables
 ```
 $ export XNU_SOURCES=full_path_to_darwin-xnu
-$ export KERNEL_SYMBOLS_FILE=full_path_to_kernel.ld
+$ export KERNEL_SYMBOLS_FILE=full_path_to_symbols.scv
 $ export QEMU_DIR=full_path_to_xnu-qemu-arm64
 $ export NUM_BLOCK_DEVS=2
 ```
