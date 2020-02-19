@@ -8,7 +8,7 @@ So we decided to write a block device driver by ourselves
 
 To execute the driver we will hook one of the kernel's functions.
 
-We will use the same technique that was described in [pic-binary](https://github.com/alephsecurity/xnu-qemu-arm64-tools-private/blob/master/pic-binary/README.md).
+We will use the same technique that was described in [pic-binary](https://github.com/alephsecurity/xnu-qemu-arm64-tools/blob/master/pic-binary/README.md).
 
 ### Instructions
 
