@@ -21,10 +21,17 @@ to the RAM disk image before boot). To generate it offline, install `dropbear`
 command.
 
 ## Building
+Build the binary (will be placed in the `bin` folder):
+```
+$ make
+```
 
-Just run `make` to build the binary, and `make install` to sign, update the trust cache and copy the binary to the disk
-image. Notice that a new hash is added to the trust cache after each successful `make install`,
-so it will contain quite a bit of garbage after a while.
+Sign, update the trust cache and copy the binary to the disk image:
+
+:bangbang:**NOTE**:bangbang: the following command is using a *hardcoded* path for `mount`/`unmount`. If the disk is already mounted, avoid this command (or edit the path to the mounted disk in the Makefile).
+```
+$ make install
+```
 
 ## Running
 
