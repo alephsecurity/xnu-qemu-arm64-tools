@@ -26,9 +26,9 @@ Build the binary (will be placed in the `bin` folder):
 $ make
 ```
 
-Sign, update the trust cache and copy the binary to the disk image.
+Sign, update the trust cache and copy the binary to the disk image:
 
-:bangbang:**NOTE**:bangbang: the following command is using a *hardcoded* path for `mount`/`unmount`. If the disk is already mounted, avoid this command (or edit the path to the mounted disk in the Makefile):
+:bangbang:**NOTE**:bangbang: the following command is using a *hardcoded* path for `mount`/`unmount`. If the disk is already mounted, avoid this command (or edit the path to the mounted disk in the Makefile).
 ```
 $ make install
 ```
