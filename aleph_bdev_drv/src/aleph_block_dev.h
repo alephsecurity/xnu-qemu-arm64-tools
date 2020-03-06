@@ -48,7 +48,7 @@ typedef struct {
 
 AlephBDevMembers *get_bdev_members(void *bdev);
 void *get_bdev_buffer(void *bdev);
-void *get_mclass_inst(void);
+void *get_bdev_mclass_inst(void);
 
 //our driver virtual functions
 void *AlephBlockDevice_getMetaClass(void *this);
@@ -69,15 +69,8 @@ uint64_t AlephBlockDevice_doAsyncReadWrite(void *this, void **buffer,
 typedef void (*FuncCompletionAction)(uint64_t p1, uint64_t p2,
                                      uint64_t p3, uint64_t p4);
 
-//IOStorageBlockDevice virtual function defs
-typedef void (*FuncIOStorageBdevInit)(void *this, void *dict);
-typedef void (*FuncIOStorageBdevRegisterService)(void *this, uint64_t opts);
-
 //IOStorageBlockDevice virtual function indices
 
-#define IOSTORAGEBDEV_GETMCLASS_INDEX (7)
-#define IOSTORAGEBDEV_INIT_INDEX (20)
-#define IOSTORAGEBDEV_REG_SERVICE_INDEX (83)
 #define IOSTORAGEBDEV_GETVENDORSTRING_INDEX (171)
 #define IOSTORAGEBDEV_GETPRODUCTSTRING_INDEX (172)
 #define IOSTORAGEBDEV_REPORTBSIZE_INDEX (175)
@@ -86,5 +79,10 @@ typedef void (*FuncIOStorageBdevRegisterService)(void *this, uint64_t opts);
 #define IOSTORAGEBDEV_REPORTREMOVABILITY_INDEX (179)
 #define IOSTORAGEBDEV_SOMEFUNC3_INDEX (180)
 #define IOSTORAGEBDEV_DOASYNCREADWRITE_INDEX (183)
+
+void create_new_aleph_bdev(const char *prod_name, uint64_t prod_len,
+                           const char *vendor_name, uint64_t vendor_len,
+                           const char *mutex_name, uint64_t mutex_len,
+                           uint64_t bdev_file_index, void *parent_service);
 
 #endif

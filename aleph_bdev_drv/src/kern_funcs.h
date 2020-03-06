@@ -34,6 +34,12 @@ enum IODirection
 #define IOBLOCKSTORAGEDEVICE_MCLASS_VTABLE_PTR (0xfffffff006e14200)
 #define IOBLOCKSTORAGEDEVICE_VTABLE_PTR (0xfffffff006e13c00)
 #define IOBLOCKSTORAGEDEVICE_CONSTRUCTOR_FUNC_PTR (0xfffffff00619ad80)
+
+#define IOMFB_MCLASS_INST_PTR (0xfffffff00771b408)
+#define IOMFB_MCLASS_VTABLE_PTR (0xfffffff006e8d4b8)
+#define IOMFB_VTABLE_PTR (0xfffffff006e8ca10)
+#define IOMFB_CONSTRUCTOR_FUNC_PTR (0xfffffff00636a660)
+
 #define SALLCLASSESDICT_PTR (0xfffffff007672e00)
 #define SALLCLASSESLOCK_PTR (0xfffffff007672dc0)
 #define SSTALLEDCLASSESLOCK_PTR (0xfffffff007672dd0)
@@ -76,6 +82,12 @@ void *_ZN9IOService15serviceMatchingEPKcP12OSDictionary(char *class_name,
 #define IOService_serviceMatching(x, y) \
         _ZN9IOService15serviceMatchingEPKcP12OSDictionary(x, y)
 
+//IOService::nameMatching(char const*, OSDictionary*)
+void *_ZN9IOService12nameMatchingEPKcP12OSDictionary(char *name,
+                                                     void *dict);
+#define IOService_nameMatching(x, y) \
+        _ZN9IOService12nameMatchingEPKcP12OSDictionary(x, y)
+
 //OSDictionary * waitForMatchingService(OSDictionary *param_1,long_long param_2)
 void *_ZN9IOService22waitForMatchingServiceEP12OSDictionaryy(void *dict,
                                                              uint64_t timeout);
@@ -96,5 +108,7 @@ void lck_mtx_lock(void *lck_mtx);
 void lck_mtx_unlock(void *lck_mtx);
 void *lck_grp_alloc_init(char *name, void *p2);
 void *lck_mtx_alloc_init(void *mtx_grp, void *p2);
+
+void kernel_thread_start(void *code, void *param, void *new_thread);
 
 #endif
