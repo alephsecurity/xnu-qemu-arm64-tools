@@ -27,6 +27,7 @@
 #include "aleph_bdev_mclass.h"
 #include "kern_funcs.h"
 #include "utils.h"
+#include "mclass_reg.h"
 
 #include "hw/arm/guest-services/general.h"
 
@@ -44,7 +45,7 @@ void *get_bdev_buffer(void *bdev)
     return (void *)&(((uint8_t *)bdev)[ALEPH_BDEV_BUFFER_OFFSET]);
 }
 
-void *get_mclass_inst(void)
+void *get_bdev_mclass_inst(void)
 {
     return (void *)&aleph_bdev_meta_class_inst[0];
 }
@@ -53,7 +54,7 @@ void *get_mclass_inst(void)
 
 void *AlephBlockDevice_getMetaClass(void *this)
 {
-    return get_mclass_inst();
+    return get_bdev_mclass_inst();
 }
 
 uint64_t AlephBlockDevice_reportRemovability(void *this, char *isRemovable)
@@ -169,4 +170,44 @@ uint64_t AlephBlockDevice_doAsyncReadWrite(void *this, void **buffer,
 
     lck_mtx_unlock(members->lck_mtx);
     return 0;
+}
+
+void create_new_aleph_bdev(const char *prod_name, uint64_t prod_len,
+                           const char *vendor_name, uint64_t vendor_len,
+                           const char *mutex_name, uint64_t mutex_len,
+                           uint64_t bdev_file_index, void *parent_service)
+{
+    //TODO: release this object ref?
+    void *bdev = OSMetaClass_allocClassWithName(BDEV_CLASS_NAME);
+    if (NULL == bdev) {
+        cancel();
+    }
+    void **vtable_ptr = (void **)*(uint64_t *)bdev;
+
+    FuncIOServiceInit vfunc_init =
+                (FuncIOServiceInit)vtable_ptr[IOSERVICE_INIT_INDEX];
+    vfunc_init(bdev, NULL);
+
+    AlephBDevMembers *members = get_bdev_members(bdev);
+    members->qc_file_index = bdev_file_index;
+    memcpy(&members->product_name[0], prod_name, prod_len);
+    memcpy(&members->vendor_name[0], vendor_name, vendor_len);
+    members->vendor_name[0] += bdev_file_index;
+    memcpy(&members->mutex_name[0], mutex_name, mutex_len);
+    members->mutex_name[0] += bdev_file_index;
+    members->mtx_grp = lck_grp_alloc_init(&members->mutex_name[0], NULL);
+    members->lck_mtx = lck_mtx_alloc_init(members->mtx_grp, NULL);
+    members->size = qc_size_file(bdev_file_index);
+    members->block_count = (members->size + BLOCK_SIZE - 1) / BLOCK_SIZE;
+
+    if (NULL == parent_service) {
+        cancel();
+    }
+
+    //TODO: consider to also fetch this from the vtable
+    IOService_attach(bdev, parent_service);
+
+    FuncIOSerivceRegisterService vfunc_reg_service =
+        (FuncIOSerivceRegisterService)vtable_ptr[IOSERVICE_REG_SERVICE_INDEX];
+    vfunc_reg_service(bdev, 0);
 }

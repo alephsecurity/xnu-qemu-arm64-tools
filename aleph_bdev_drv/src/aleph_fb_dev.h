@@ -20,17 +20,19 @@
  * THE SOFTWARE.
  */
 
-#ifndef ALEPH_BDEV_MCLASS_H
-#define ALEPH_BDEV_MCLASS_H
+#ifndef ALEPH_FB_DEV_H
+#define ALEPH_FB_DEV_H
 
-//not sure what the original vtable size is, use this for now
-#define BDEV_VTABLE_SIZE (0x1000)
+//just in case.
+#define ALEPH_FBDEV_SIZE (0x2000)
 
-void create_bdev_vtable(void);
-void create_bdev_metaclass_vtable(void);
-void register_bdev_meta_class();
+#define FBDEV_CLASS_NAME "AlephFramebufferDevice"
 
-//our driver metaclass virtual functions
-void *bdev_alloc(void);
+void *get_fb_mclass_inst(void);
+
+//our driver virtual functions
+void *AlephFramebufferDevice_getMetaClass(void *this);
+
+void create_new_aleph_fbdev(void *parent_service);
 
 #endif

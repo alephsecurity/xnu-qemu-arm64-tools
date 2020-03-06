@@ -27,6 +27,8 @@
 #include "utils.h"
 #include "aleph_block_dev.h"
 #include "aleph_bdev_mclass.h"
+#include "aleph_fb_dev.h"
+#include "aleph_fb_mclass.h"
 
 #include "hw/arm/guest-services/general.h"
 
@@ -53,49 +55,53 @@ void _start() {
         cancel();
     }
 
+    log_uint64("temp: ", 1);
     register_bdev_meta_class();
+    log_uint64("temp: ", 2);
+    register_fb_meta_class();
+    log_uint64("temp: ", 3);
 
     //TODO: release this object ref
     void *match_dict = IOService_serviceMatching("AppleARMPE", NULL);
+    log_uint64("temp: ", 4);
     //TODO: release this object ref
     void *service = waitForMatchingService(match_dict, 0);
+    log_uint64("temp: ", 5);
+    //TODO: release this object ref
     if (0 == service) {
         cancel();
     }
+    log_uint64("temp: ", 6);
+
+    //TODO: release this object ref
+    void *match_dict_disp = IOService_nameMatching("disp0", NULL);
+    log_uint64("temp: ", 11);
+    //TODO: release this object ref
+    void *service_disp = waitForMatchingService(match_dict_disp, 0);
+    log_uint64("temp: ", 12);
+    if (0 == service_disp) {
+        cancel();
+    }
+    log_uint64("temp: ", 13);
+
+    char bdev_prod_name[] = "0AlephBDev";
+    char bdev_vendor_name[] = "0Aleph";
+    char bdev_mutex_name[] = "0AM";
 
     for (i = 0; i < NUM_BLOCK_DEVS; i++) {
         //TODO: release this object ref?
-        void *bdev = OSMetaClass_allocClassWithName(BDEV_CLASS_NAME);
-        if (NULL == bdev) {
-            cancel();
-        }
-        void **vtable_ptr = (void **)*(uint64_t *)bdev;
-
-        FuncIOStorageBdevInit vfunc_init =
-                    (FuncIOStorageBdevInit)vtable_ptr[IOSTORAGEBDEV_INIT_INDEX];
-        vfunc_init(bdev, NULL);
-
-        AlephBDevMembers *members = get_bdev_members(bdev);
-        members->qc_file_index = i;
-        memcpy(&members->product_name[0], "0AlephBDev", 11);
-        members->product_name[0] += i;
-        memcpy(&members->vendor_name[0], "0Aleph", 7);
-        members->vendor_name[0] += i;
-        memcpy(&members->mutex_name[0], "0AM", 4);
-        members->mutex_name[0] += i;
-        members->mtx_grp = lck_grp_alloc_init(&members->mutex_name[0], NULL);
-        members->lck_mtx = lck_mtx_alloc_init(members->mtx_grp, NULL);
-        members->size = qc_size_file(i);
-        members->block_count = (members->size + BLOCK_SIZE - 1) / BLOCK_SIZE;
-
-        IOService_attach(bdev, service);
-
-        FuncIOStorageBdevRegisterService vfunc_reg_service =
-            (FuncIOStorageBdevRegisterService)vtable_ptr[IOSTORAGEBDEV_REG_SERVICE_INDEX];
-        vfunc_reg_service(bdev, 0);
+        bdev_prod_name[0]++;
+        bdev_vendor_name[0]++;
+        bdev_mutex_name[0]++;
+        create_new_aleph_bdev(bdev_prod_name, 11, bdev_vendor_name, 7,
+                              bdev_mutex_name, 4, i, service);
 
         //TODO: hack for now to make the first registered bdev disk0 instead
         //of having the system change the order
         IOSleep(100);
     }
+
+    log_uint64("temp: ", 7);
+    create_new_aleph_fbdev(service_disp);
+    log_uint64("temp: ", 8);
 }

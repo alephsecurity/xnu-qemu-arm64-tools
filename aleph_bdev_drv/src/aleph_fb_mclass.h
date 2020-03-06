@@ -20,17 +20,17 @@
  * THE SOFTWARE.
  */
 
-#ifndef ALEPH_BDEV_MCLASS_H
-#define ALEPH_BDEV_MCLASS_H
+#ifndef ALEPH_FB_MCLASS_H
+#define ALEPH_FB_MCLASS_H
 
 //not sure what the original vtable size is, use this for now
-#define BDEV_VTABLE_SIZE (0x1000)
+#define FB_VTABLE_SIZE (0x1000)
 
-void create_bdev_vtable(void);
-void create_bdev_metaclass_vtable(void);
-void register_bdev_meta_class();
+void create_fb_vtable(void);
+void create_fb_metaclass_vtable(void);
+void register_fb_meta_class();
 
 //our driver metaclass virtual functions
-void *bdev_alloc(void);
+void *fb_alloc(void);
 
 #endif

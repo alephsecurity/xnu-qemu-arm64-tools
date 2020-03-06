@@ -27,6 +27,7 @@
 #include "kern_funcs.h"
 #include "aleph_block_dev.h"
 #include "utils.h"
+#include "mclass_reg.h"
 
 #include "hw/arm/guest-services/general.h"
 
@@ -39,7 +40,7 @@ void create_bdev_vtable(void)
     memcpy(&bdev_vtable[0],
            (void *)IOBLOCKSTORAGEDEVICE_VTABLE_PTR,
            sizeof(bdev_vtable));
-    bdev_vtable[IOSTORAGEBDEV_GETMCLASS_INDEX] =
+    bdev_vtable[IOSERVICE_GETMCLASS_INDEX] =
                                         &AlephBlockDevice_getMetaClass;
     bdev_vtable[IOSTORAGEBDEV_GETVENDORSTRING_INDEX] =
                                         &AlephBlockDevice_getVendorString;
@@ -68,7 +69,7 @@ void *bdev_alloc(void)
     void **obj = OSObject_new(ALEPH_BDEV_SIZE);
     ioblockstoragedevice_constructor(obj);
     obj[0] = &bdev_vtable[0];
-    OSMetaClass_instanceConstructed(get_mclass_inst());
+    OSMetaClass_instanceConstructed(get_bdev_mclass_inst());
     return obj;
 }
 
@@ -82,15 +83,12 @@ void create_bdev_metaclass_vtable(void)
 
 void register_bdev_meta_class()
 {
-    if (NULL == *(void **)SSTALLEDCLASSESLOCK_PTR) {
-        cancel();
-    }
-    lck_mtx_lock(*(void **)SSTALLEDCLASSESLOCK_PTR);
+    mclass_reg_slock_lock();
 
     create_bdev_vtable();
     create_bdev_metaclass_vtable();
 
-    void **mc = OSMetaClass_OSMetaClass(get_mclass_inst(),
+    void **mc = OSMetaClass_OSMetaClass(get_bdev_mclass_inst(),
                                   BDEV_CLASS_NAME,
                                   (void *)IOBLOCKSTORAGEDEVICE_MCLASS_INST_PTR,
                                   ALEPH_BDEV_SIZE);
@@ -99,28 +97,11 @@ void register_bdev_meta_class()
     }
     mc[0] = &bdev_meta_class_vtable;
 
-    if (NULL == *(void **)SALLCLASSESLOCK_PTR) {
-        cancel();
-    }
-    lck_mtx_lock(*(void **)SALLCLASSESLOCK_PTR);
+    mclass_reg_alock_lock();
 
+    add_to_classes_dict(BDEV_CLASS_NAME, mc);
 
-    uint32_t *dict = *(uint32_t **)SALLCLASSESDICT_PTR;
-    if (NULL == dict) {
-        cancel();
-    }
-
-    //fOptions =& ~kImmutable
-    dict[4] = dict[4] & ~(uint32_t)1;
-    void *sym = OSSymbol_withCStringNoCopy(BDEV_CLASS_NAME);
-    OSDictionary_setObject((void *)dict, sym, mc);
-
-    char *c_class_name = (char *)mc[3];
-    if (NULL != c_class_name) {
-        mc[3] = OSSymbol_withCStringNoCopy(c_class_name);
-    }
-
-    lck_mtx_unlock(*(void **)SALLCLASSESLOCK_PTR);
-    lck_mtx_unlock(*(void **)SSTALLEDCLASSESLOCK_PTR);
+    mclass_reg_alock_unlock();
+    mclass_reg_slock_unlock();
 
 }

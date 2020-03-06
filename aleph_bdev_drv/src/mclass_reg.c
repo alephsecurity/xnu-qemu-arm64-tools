@@ -20,17 +20,57 @@
  * THE SOFTWARE.
  */
 
-#ifndef ALEPH_BDEV_MCLASS_H
-#define ALEPH_BDEV_MCLASS_H
+#include <string.h>
+#include <stdint.h>
 
-//not sure what the original vtable size is, use this for now
-#define BDEV_VTABLE_SIZE (0x1000)
+#include "mclass_reg.h"
+#include "kern_funcs.h"
+#include "aleph_block_dev.h"
+#include "utils.h"
 
-void create_bdev_vtable(void);
-void create_bdev_metaclass_vtable(void);
-void register_bdev_meta_class();
+#include "hw/arm/guest-services/general.h"
 
-//our driver metaclass virtual functions
-void *bdev_alloc(void);
+void add_to_classes_dict(char *name, void **mc)
+{
+    uint32_t *dict = *(uint32_t **)SALLCLASSESDICT_PTR;
+    if (NULL == dict) {
+        cancel();
+    }
 
-#endif
+    //fOptions =& ~kImmutable
+    dict[4] = dict[4] & ~(uint32_t)1;
+    void *sym = OSSymbol_withCStringNoCopy(name);
+    OSDictionary_setObject((void *)dict, sym, mc);
+
+    char *c_class_name = (char *)mc[3];
+    if (NULL != c_class_name) {
+        mc[3] = OSSymbol_withCStringNoCopy(c_class_name);
+    }
+}
+
+void mclass_reg_alock_lock()
+{
+    if (NULL == *(void **)SALLCLASSESLOCK_PTR) {
+        cancel();
+    }
+    lck_mtx_lock(*(void **)SALLCLASSESLOCK_PTR);
+}
+
+void mclass_reg_alock_unlock()
+{
+    lck_mtx_unlock(*(void **)SALLCLASSESLOCK_PTR);
+}
+
+void mclass_reg_slock_lock()
+{
+    if (NULL == *(void **)SSTALLEDCLASSESLOCK_PTR) {
+        cancel();
+    }
+    lck_mtx_lock(*(void **)SSTALLEDCLASSESLOCK_PTR);
+}
+
+void mclass_reg_slock_unlock()
+{
+    lck_mtx_unlock(*(void **)SSTALLEDCLASSESLOCK_PTR);
+}
+
