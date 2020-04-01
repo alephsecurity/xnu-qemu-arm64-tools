@@ -172,10 +172,9 @@ uint64_t AlephBlockDevice_doAsyncReadWrite(void *this, void **buffer,
     return 0;
 }
 
-void create_new_aleph_bdev(const char *prod_name, uint64_t prod_len,
-                           const char *vendor_name, uint64_t vendor_len,
-                           const char *mutex_name, uint64_t mutex_len,
-                           uint64_t bdev_file_index, void *parent_service)
+void create_new_aleph_bdev(const char *prod_name, const char *vendor_name,
+                           const char *mutex_name, uint64_t bdev_file_index,
+                           void *parent_service)
 {
     //TODO: release this object ref?
     void *bdev = OSMetaClass_allocClassWithName(BDEV_CLASS_NAME);
@@ -190,10 +189,10 @@ void create_new_aleph_bdev(const char *prod_name, uint64_t prod_len,
 
     AlephBDevMembers *members = get_bdev_members(bdev);
     members->qc_file_index = bdev_file_index;
-    memcpy(&members->product_name[0], prod_name, prod_len);
-    memcpy(&members->vendor_name[0], vendor_name, vendor_len);
+    strncpy(&members->product_name[0], prod_name, VENDOR_NAME_SIZE);
+    strncpy(&members->vendor_name[0], vendor_name, VENDOR_NAME_SIZE);
     members->vendor_name[0] += bdev_file_index;
-    memcpy(&members->mutex_name[0], mutex_name, mutex_len);
+    strncpy(&members->mutex_name[0], mutex_name, VENDOR_NAME_SIZE);
     members->mutex_name[0] += bdev_file_index;
     members->mtx_grp = lck_grp_alloc_init(&members->mutex_name[0], NULL);
     members->lck_mtx = lck_mtx_alloc_init(members->mtx_grp, NULL);
@@ -204,8 +203,9 @@ void create_new_aleph_bdev(const char *prod_name, uint64_t prod_len,
         cancel();
     }
 
-    //TODO: consider to also fetch this from the vtable
-    IOService_attach(bdev, parent_service);
+    FuncIOServiceAttach vfunc_attach =
+                (FuncIOServiceAttach)vtable_ptr[IOSERVICE_ATTACH_INDEX];
+    vfunc_attach(bdev, parent_service);
 
     FuncIOSerivceRegisterService vfunc_reg_service =
         (FuncIOSerivceRegisterService)vtable_ptr[IOSERVICE_REG_SERVICE_INDEX];
