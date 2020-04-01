@@ -37,19 +37,17 @@ static MetaClassVTable fb_meta_class_vtable;
 void create_fb_vtable(void)
 {
     memcpy(&fb_vtable[0],
-           (void *)IOMFB_VTABLE_PTR,
+           (void *)IOSERVICE_VTABLE_PTR,
            sizeof(fb_vtable));
     fb_vtable[IOSERVICE_GETMCLASS_INDEX] = &AlephFramebufferDevice_getMetaClass;
+    log_uint64("fb vtable: ", (uint64_t)&fb_vtable[0]);
 }
 
 void *fb_alloc(void)
 {
-    ObjConstructor iomfb_constructor =
-        (ObjConstructor)IOMFB_CONSTRUCTOR_FUNC_PTR;
-
     void **obj = OSObject_new(ALEPH_FBDEV_SIZE);
     log_uint64("fb obj: ", (uint64_t)obj);
-    iomfb_constructor(obj);
+    IOService_IOService(obj, get_fb_mclass_inst());
     obj[0] = &fb_vtable[0];
     OSMetaClass_instanceConstructed(get_fb_mclass_inst());
     return obj;
@@ -57,7 +55,7 @@ void *fb_alloc(void)
 
 void create_fb_metaclass_vtable(void)
 {
-    memcpy(&fb_meta_class_vtable, (void *)IOMFB_MCLASS_VTABLE_PTR,
+    memcpy(&fb_meta_class_vtable, (void *)IOSERVICE_MCLASS_VTABLE_PTR,
            sizeof(MetaClassVTable));
     fb_meta_class_vtable.alloc = fb_alloc;
 }
@@ -71,8 +69,9 @@ void register_fb_meta_class()
 
     void **mc = OSMetaClass_OSMetaClass(get_fb_mclass_inst(),
                                   FBDEV_CLASS_NAME,
-                                  (void *)IOMFB_MCLASS_INST_PTR,
+                                  (void *)IOSERVICE_MCLASS_INST_PTR,
                                   ALEPH_FBDEV_SIZE);
+    log_uint64("fb mc inst: ", (uint64_t)mc);
     if (NULL == mc) {
         cancel();
     }

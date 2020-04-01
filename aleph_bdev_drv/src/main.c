@@ -29,6 +29,8 @@
 #include "aleph_bdev_mclass.h"
 #include "aleph_fb_dev.h"
 #include "aleph_fb_mclass.h"
+#include "aleph_fbuc_dev.h"
+#include "aleph_fbuc_mclass.h"
 
 #include "hw/arm/guest-services/general.h"
 
@@ -59,13 +61,14 @@ void _start() {
     register_bdev_meta_class();
     log_uint64("temp: ", 2);
     register_fb_meta_class();
+    register_fbuc_meta_class();
     log_uint64("temp: ", 3);
 
     //TODO: release this object ref
     void *match_dict = IOService_serviceMatching("AppleARMPE", NULL);
     log_uint64("temp: ", 4);
     //TODO: release this object ref
-    void *service = waitForMatchingService(match_dict, 0);
+    void *service = waitForMatchingService(match_dict, -1);
     log_uint64("temp: ", 5);
     //TODO: release this object ref
     if (0 == service) {
@@ -77,7 +80,8 @@ void _start() {
     void *match_dict_disp = IOService_nameMatching("disp0", NULL);
     log_uint64("temp: ", 11);
     //TODO: release this object ref
-    void *service_disp = waitForMatchingService(match_dict_disp, 0);
+    void *service_disp = waitForMatchingService(match_dict_disp, -1);
+
     log_uint64("temp: ", 12);
     if (0 == service_disp) {
         cancel();
@@ -93,12 +97,17 @@ void _start() {
         bdev_prod_name[0]++;
         bdev_vendor_name[0]++;
         bdev_mutex_name[0]++;
-        create_new_aleph_bdev(bdev_prod_name, 11, bdev_vendor_name, 7,
-                              bdev_mutex_name, 4, i, service);
+        create_new_aleph_bdev(bdev_prod_name, bdev_vendor_name,
+                              bdev_mutex_name, i, service);
 
         //TODO: hack for now to make the first registered bdev disk0 instead
         //of having the system change the order
-        IOSleep(100);
+        IOSleep(1000);
+        ////wait for the first disk to be loaded as disk0
+        //if (0 == i) {
+        //    void *match_dict_first = IOService_serviceMatching("IOMediaBSDClient", NULL);
+        //    void *service_first = waitForMatchingService(match_dict_first, -1);
+        //}
     }
 
     log_uint64("temp: ", 7);

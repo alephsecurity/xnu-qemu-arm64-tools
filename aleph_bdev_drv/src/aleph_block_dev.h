@@ -80,9 +80,8 @@ typedef void (*FuncCompletionAction)(uint64_t p1, uint64_t p2,
 #define IOSTORAGEBDEV_SOMEFUNC3_INDEX (180)
 #define IOSTORAGEBDEV_DOASYNCREADWRITE_INDEX (183)
 
-void create_new_aleph_bdev(const char *prod_name, uint64_t prod_len,
-                           const char *vendor_name, uint64_t vendor_len,
-                           const char *mutex_name, uint64_t mutex_len,
-                           uint64_t bdev_file_index, void *parent_service);
+void create_new_aleph_bdev(const char *prod_name, const char *vendor_name,
+                           const char *mutex_name, uint64_t bdev_file_index,
+                           void *parent_service);
 
 #endif

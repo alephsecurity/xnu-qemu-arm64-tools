@@ -20,19 +20,17 @@
  * THE SOFTWARE.
  */
 
-#ifndef ALEPH_FB_DEV_H
-#define ALEPH_FB_DEV_H
+#ifndef ALEPH_FBUC_MCLASS_H
+#define ALEPH_FBUC_MCLASS_H
 
-//just in case.
-#define ALEPH_FBDEV_SIZE (0x2000)
+//not sure what the original vtable size is, use this for now
+#define FBUC_VTABLE_SIZE (0x1000)
 
-#define FBDEV_CLASS_NAME "IOMobileFramebuffer"
+void create_fbuc_vtable(void);
+void create_fbuc_metaclass_vtable(void);
+void register_fbuc_meta_class();
 
-void *get_fb_mclass_inst(void);
-
-//our driver virtual functions
-void *AlephFramebufferDevice_getMetaClass(void *this);
-
-void create_new_aleph_fbdev(void *parent_service);
+//our driver metaclass virtual functions
+void *fbuc_alloc(void);
 
 #endif

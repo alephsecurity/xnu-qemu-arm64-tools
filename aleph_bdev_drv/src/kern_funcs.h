@@ -40,6 +40,14 @@ enum IODirection
 #define IOMFB_VTABLE_PTR (0xfffffff006e8ca10)
 #define IOMFB_CONSTRUCTOR_FUNC_PTR (0xfffffff00636a660)
 
+#define IOSERVICE_MCLASS_INST_PTR (0xfffffff007602b68)
+#define IOSERVICE_MCLASS_VTABLE_PTR (0xfffffff007086e80)
+#define IOSERVICE_VTABLE_PTR (0xfffffff007086300)
+
+#define IOUC_MCLASS_INST_PTR (0xfffffff0076033f8)
+#define IOUC_MCLASS_VTABLE_PTR (0xfffffff007091058)
+#define IOUC_VTABLE_PTR (0xfffffff007090a78)
+
 #define SALLCLASSESDICT_PTR (0xfffffff007672e00)
 #define SALLCLASSESLOCK_PTR (0xfffffff007672dc0)
 #define SSTALLEDCLASSESLOCK_PTR (0xfffffff007672dd0)
@@ -94,9 +102,55 @@ void *_ZN9IOService22waitForMatchingServiceEP12OSDictionaryy(void *dict,
 #define waitForMatchingService(x, y) \
         _ZN9IOService22waitForMatchingServiceEP12OSDictionaryy(x, y)
 
-//IOService::attach(IOService*)
-uint64_t _ZN9IOService6attachEPS_(void *this, void *parent);
-#define IOService_attach(x, y) _ZN9IOService6attachEPS_(x, y)
+//IOService::IOService(OSMetaClass*)
+void _ZN9IOServiceC1EPK11OSMetaClass(void *this, void *metaclass);
+#define IOService_IOService(x, y) _ZN9IOServiceC1EPK11OSMetaClass(x, y)
+
+//IOService::start(IOService*)
+uint64_t _ZN9IOService5startEPS_(void *this);
+#define IOService_start(x) _ZN9IOService5startEPS_(x)
+
+//IOUserClient::IOUserClient(OSMetaClass const*
+void _ZN12IOUserClientC2EPK11OSMetaClass(void *this, void *metaclass);
+#define IOUserClient_IOUserClient(x, y) \
+        _ZN12IOUserClientC2EPK11OSMetaClass(x, y)
+
+//IOUserClient::externalMethod
+uint64_t
+_ZN12IOUserClient14externalMethodEjP25IOExternalMethodArgumentsP24IOExternalMethodDispatchP8OSObjectPv(
+                            void *this, uint32_t selector, void *args,
+                            void *dispatch, void *target, void *reference);
+#define IOUserClient_externalMethod(a, b, c, d, e, f) \
+        _ZN12IOUserClient14externalMethodEjP25IOExternalMethodArgumentsP24IOExternalMethodDispatchP8OSObjectPv(a, b, c, d, e, f)
+
+//IOUserClient::~IOUserClient()
+void *_ZN12IOUserClientD2Ev(void *this);
+#define IOUserClient_destructor(x) _ZN12IOUserClientD2Ev(x)
+
+//OSObject::operator delete(void*, unsigned long
+void _ZN8OSObjectdlEPvm(void *obj, uint64_t size);
+#define OSObject_delete(x, y) _ZN8OSObjectdlEPvm(x, y)
+
+//IOUserClient::initWithTask(task*, void*, unsigned int)
+uint64_t _ZN12IOUserClient12initWithTaskEP4taskPvj(void *this, void *task,
+                                                   void *sid, uint64_t type);
+#define IOUserClient_initWithTask(a, b, c, d) \
+    _ZN12IOUserClient12initWithTaskEP4taskPvj(a, b, c, d)
+
+//IOUserClient::setAsyncReference64(unsigned long long*, ipc_port*, unsigned long long, unsigned, long long, task*)
+void _ZN12IOUserClient19setAsyncReference64EPyP8ipc_portyyP4task(void *aref,
+                                                                 void *port,
+                                                                 uint64_t cb,
+                                                                 uint64_t ref,
+                                                                 void *task);
+#define IOUserClient_setAsyncReference64(a, b, c, d, e) \
+    _ZN12IOUserClient19setAsyncReference64EPyP8ipc_portyyP4task(a, b, c, d, e)
+
+//IOUserClient::sendAsyncResult64(unsigned long long*, int, unsigned long long*, unsigned int)
+void _ZN12IOUserClient17sendAsyncResult64EPyiS0_j(void *aref, uint64_t res,
+                                                  uint64_t *args, uint64_t cnt);
+#define IOUserClient_sendAsyncResult64(a, b, c, d) \
+    _ZN12IOUserClient17sendAsyncResult64EPyiS0_j(a, b, c, d)
 
 //void _IOLog(undefined8 param_1)
 void IOLog(const char* fmt, ...);
