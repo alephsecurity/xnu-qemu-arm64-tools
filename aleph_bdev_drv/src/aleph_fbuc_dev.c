@@ -65,6 +65,18 @@ static void fbuc_install_external_method(void *fbuc,
     members->fbuc_external_methods[index].checkStructureOutputSize = stoc;
 }
 
+static uint64_t fbuc_ext_meth_get_layer_default_sur(void *target,
+                                                    void *reference,
+                                          IOExternalMethodArguments *arguments)
+{
+    log_uint64("fbuc_ext_meth_get_layer_default_sur()!!!", 0);
+    arguments->scalarOutput[0] = 1;
+    log_uint64("arguments->scalarOutput[0]", arguments->scalarOutput[0]);
+    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
+    log_uint64("arguments->scalarInput[1]", arguments->scalarInput[1]);
+    return 0;
+}
+
 static uint64_t fbuc_ext_meth_swap_begin(void *target, void *reference,
                                          IOExternalMethodArguments *arguments)
 {
@@ -76,10 +88,45 @@ static uint64_t fbuc_ext_meth_swap_begin(void *target, void *reference,
 static uint64_t fbuc_ext_meth_swap_end(void *target, void *reference,
                                        IOExternalMethodArguments *arguments)
 {
-    uint64_t tmp = ((uint64_t *)arguments->structureInput)[0];
-    log_uint64("fbuc_ext_meth_swap_end()!!!", tmp);
-    log_uint64("fbuc_ext_meth_swap_end()!!! size: ",
+    log_uint64("fbuc_ext_meth_swap_end()!!!", 0);
+    log_uint64("((uint64_t *)arguments->structureInput)[0]",
+               ((uint64_t *)arguments->structureOutput)[0]);
+    log_uint64("((uint64_t *)arguments->structureInput)[1]",
+               ((uint64_t *)arguments->structureOutput)[1]);
+    log_uint64("((uint64_t *)arguments->structureInput)[2]",
+               ((uint64_t *)arguments->structureOutput)[2]);
+    log_uint64("((uint64_t *)arguments->structureInput)[37]",
+               ((uint64_t *)arguments->structureOutput)[37]);
+    log_uint64("((uint64_t *)arguments->structureInput)[38]",
+               ((uint64_t *)arguments->structureOutput)[38]);
+    log_uint64("((uint64_t *)arguments->structureInput)[39]",
+               ((uint64_t *)arguments->structureOutput)[39]);
+    log_uint64("((uint64_t *)arguments->structureInput)[40]",
+               ((uint64_t *)arguments->structureOutput)[40]);
+    log_uint64("((uint64_t *)arguments->structureInput)[41]",
+               ((uint64_t *)arguments->structureOutput)[41]);
+    log_uint64("((uint64_t *)arguments->structureInput)[42]",
+               ((uint64_t *)arguments->structureOutput)[42]);
+    log_uint64("((uint64_t *)arguments->structureInput)[43]",
+               ((uint64_t *)arguments->structureOutput)[43]);
+    log_uint64("((uint64_t *)arguments->structureInput)[76]",
+               ((uint64_t *)arguments->structureOutput)[76]);
+    log_uint64("((uint64_t *)arguments->structureInput)[77]",
+               ((uint64_t *)arguments->structureOutput)[77]);
+    log_uint64("((uint64_t *)arguments->structureInput)[78]",
+               ((uint64_t *)arguments->structureOutput)[78]);
+    log_uint64("fbuc_ext_meth_swap_end()!!! arguments->structureInputSize: ",
                arguments->structureInputSize);
+    return 0;
+}
+
+static uint64_t fbuc_ext_meth_swap_wait(void *target, void *reference,
+                                        IOExternalMethodArguments *arguments)
+{
+    log_uint64("fbuc_ext_meth_swap_wait()!!!", 0);
+    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
+    log_uint64("arguments->scalarInput[1]", arguments->scalarInput[1]);
+    log_uint64("arguments->scalarInput[2]", arguments->scalarInput[2]);
     return 0;
 }
 
@@ -119,6 +166,18 @@ static uint64_t fbuc_ext_meth_set_debug_flags(void *target, void *reference,
     return 0;
 }
 
+static uint64_t fbuc_ext_meth_set_gamma_table(void *target,
+                                              void *reference,
+                                          IOExternalMethodArguments *arguments)
+{
+    log_uint64("fbuc_ext_meth_set_gamma_table()!!!", 0);
+    log_uint64("((uint64_t *)arguments->structureOutput)[0]",
+               ((uint64_t *)arguments->structureOutput)[0]);
+    log_uint64("((uint64_t *)arguments->structureOutput)[1]",
+               ((uint64_t *)arguments->structureOutput)[1]);
+    return 0;
+}
+
 static uint64_t fbuc_ext_meth_is_main_disp(void *target, void *reference,
                                           IOExternalMethodArguments *arguments)
 {
@@ -132,6 +191,17 @@ static uint64_t fbuc_ext_meth_set_display_dev(void *target, void *reference,
 {
     log_uint64("fbuc_ext_meth_set_display_dev()!!!", 0);
     log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
+    return 0;
+}
+
+static uint64_t fbuc_ext_meth_get_gamma_table(void *target,
+                                              void *reference,
+                                          IOExternalMethodArguments *arguments)
+{
+    log_uint64("fbuc_ext_meth_get_gamma_table()!!!", 0);
+    for (int i = 0; i < arguments->structureOutputSize; i++) {
+        ((uint8_t *)arguments->structureOutput)[i] = 0x7f;
+    }
     return 0;
 }
 
@@ -155,6 +225,39 @@ static uint64_t fbuc_ext_meth_en_dis_vid_power_save(void *target,
     return 0;
 }
 
+static uint64_t fbuc_ext_meth_surface_is_rep(void *target,
+                                             void *reference,
+                                          IOExternalMethodArguments *arguments)
+{
+    log_uint64("fbuc_ext_meth_surface_is_rep()!!!", 0);
+    arguments->scalarOutput[0] = 1;
+    log_uint64("arguments->scalarOutput[0]", arguments->scalarOutput[0]);
+    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
+    return 0;
+}
+
+static uint64_t fbuc_ext_meth_set_bright_corr(void *target,
+                                              void *reference,
+                                          IOExternalMethodArguments *arguments)
+{
+    log_uint64("fbuc_ext_meth_set_bright_corr()!!!", 0);
+    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
+    return 0;
+}
+
+static uint64_t fbuc_ext_meth_set_matrix(void *target,
+                                         void *reference,
+                                         IOExternalMethodArguments *arguments)
+{
+    log_uint64("fbuc_ext_meth_set_matrix()!!!", 0);
+    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
+    log_uint64("((uint64_t *)arguments->structureInput)[0]",
+               ((uint64_t *)arguments->structureOutput)[0]);
+    log_uint64("((uint64_t *)arguments->structureInput)[1]",
+               ((uint64_t *)arguments->structureOutput)[1]);
+    return 0;
+}
+
 static uint64_t fbuc_ext_meth_get_color_remap_mode(void *target,
                                                    void *reference,
                                           IOExternalMethodArguments *arguments)
@@ -163,6 +266,17 @@ static uint64_t fbuc_ext_meth_get_color_remap_mode(void *target,
     //TODO: this might need to be changed. not sure what the numbers mean
     log_uint64("fbuc_ext_meth_get_color_remap_mode()!!!", arguments->scalarOutput[0]);
     //arguments->scalarOutput[0] = 6;
+    return 0;
+}
+
+static uint64_t fbuc_ext_meth_set_parameter(void *target,
+                                            void *reference,
+                                          IOExternalMethodArguments *arguments)
+{
+    log_uint64("fbuc_ext_meth_set_parameter()!!!", 0);
+    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
+    log_uint64("((uint64_t *)arguments->structureInput)[0]",
+               ((uint64_t *)arguments->structureOutput)[0]);
     return 0;
 }
 
@@ -278,10 +392,14 @@ void *fbuc_getMetaClass(void *this)
 
 uint64_t fbuc_start(void *this)
 {
+    fbuc_install_external_method(this, &fbuc_ext_meth_get_layer_default_sur,
+                                 3, 2, 0, 1, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_swap_begin,
                                  4, 0, 0, 1, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_swap_end,
                                  5, 0, -1, 0, 0);
+    fbuc_install_external_method(this, &fbuc_ext_meth_swap_wait,
+                                 6, 3, 0, 0, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_get_id, 7, 0, 0, 1, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_get_disp_size,
                                  8, 0, 0, 2, 0);
@@ -289,16 +407,28 @@ uint64_t fbuc_start(void *this)
                                  12, 1, 0, 0, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_set_debug_flags,
                                  15, 2, 0, 1, 0);
+    fbuc_install_external_method(this, &fbuc_ext_meth_set_gamma_table,
+                                 17, 0, 3084, 0, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_is_main_disp,
                                  18, 0, 0, 1, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_set_display_dev,
                                  22, 1, 0, 0, 0);
+    fbuc_install_external_method(this, &fbuc_ext_meth_get_gamma_table,
+                                 27, 0, 0, 0, 3084);
     fbuc_install_external_method(this, &fbuc_ext_meth_get_dot_pitch,
                                  28, 0, 0, 1, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_en_dis_vid_power_save,
                                  33, 1, 0, 0, 0);
+    fbuc_install_external_method(this, &fbuc_ext_meth_surface_is_rep,
+                                 49, 1, 0, 1, 0);
+    fbuc_install_external_method(this, &fbuc_ext_meth_set_bright_corr,
+                                 50, 1, 0, 0, 0);
+    fbuc_install_external_method(this, &fbuc_ext_meth_set_matrix,
+                                 55, 1, 72, 0, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_get_color_remap_mode,
                                  57, 0, 0, 1, 0);
+    fbuc_install_external_method(this, &fbuc_ext_meth_set_parameter,
+                                 68, 1, 8, 0, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_enable_notifications,
                                  72, 4, 0, 0, 0);
     fbuc_install_external_method(this, &fbuc_ext_meth_change_frame_info,
