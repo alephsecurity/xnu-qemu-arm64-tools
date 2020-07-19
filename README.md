@@ -21,3 +21,6 @@ Custom Block Device Driver that is used to mount two block devices into iOS.
 
 ## tcp-tunnel ##
 Used for tunneling TCP connections into and out of an iOS system emulated on QEMU.
+
+## xnu-kvm-lkm ##
+Linux kernel module that can be used to run QEMU with KVM, without using a custom kernel with IDSR exits support.
