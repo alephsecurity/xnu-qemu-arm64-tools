@@ -55,6 +55,7 @@ char *my_itoa(uint64_t num, char *str)
     return str;
 }
 
+//Print to console
 void log_uint64(const char *name, uint64_t num)
 {
     char str[1024];

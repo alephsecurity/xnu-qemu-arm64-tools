@@ -63,12 +63,10 @@ void *AlephFramebufferDevice_getMetaClass(void *this)
 
 //void start_new_aleph_fbdev(StartFBParams *sfb_params)
 //{
-//    log_uint64("temp: ", 111);
 //    void **vtable_ptr = (void **)*(uint64_t *)sfb_params->fbdev;
 //    FuncIOSerivceStart vfunc_start =
 //        (FuncIOSerivceStart)vtable_ptr[IOSERVICE_START_INDEX];
 //    vfunc_start(sfb_params->fbdev, sfb_params->parent_service);
-//    log_uint64("temp: ", 112);
 //}
 
 void create_new_aleph_fbdev(void *parent_service)
@@ -102,10 +100,8 @@ void create_new_aleph_fbdev(void *parent_service)
         (FuncIOSerivceRegisterService)vtable_ptr[IOSERVICE_REG_SERVICE_INDEX];
     vfunc_reg_service(fbdev, 0);
 
-    //log_uint64("temp: ", 113);
     //uint64_t unused;
     //start_fb_params.fbdev = fbdev;
     //start_fb_params.parent_service = parent_service;
     //kernel_thread_start(&start_new_aleph_fbdev, &start_fb_params, &unused);
-    log_uint64("temp: ", 114);
 }
