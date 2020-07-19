@@ -50,13 +50,11 @@ void create_fbuc_vtable(void)
     fbuc_vtable[IOUC_CONNECT_CLIENT_INDEX] = &fbuc_connectClient;
     fbuc_vtable[IOUC_CLIENT_MEM_FOR_TYPE_INDEX] = &fbuc_clientMemoryForType;
     fbuc_vtable[IOSERVICE_START_INDEX] = &fbuc_start;
-    log_uint64("fbuc vtable: ", (uint64_t)&fbuc_vtable[0]);
 }
 
 void *fbuc_alloc(void)
 {
     void **obj = OSObject_new(ALEPH_FBUC_SIZE);
-    log_uint64("fbuc obj: ", (uint64_t)obj);
     IOUserClient_IOUserClient(obj, get_fbuc_mclass_inst());
     obj[0] = &fbuc_vtable[0];
     OSMetaClass_instanceConstructed(get_fbuc_mclass_inst());

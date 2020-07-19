@@ -40,13 +40,11 @@ void create_fb_vtable(void)
            (void *)IOSERVICE_VTABLE_PTR,
            sizeof(fb_vtable));
     fb_vtable[IOSERVICE_GETMCLASS_INDEX] = &AlephFramebufferDevice_getMetaClass;
-    log_uint64("fb vtable: ", (uint64_t)&fb_vtable[0]);
 }
 
 void *fb_alloc(void)
 {
     void **obj = OSObject_new(ALEPH_FBDEV_SIZE);
-    log_uint64("fb obj: ", (uint64_t)obj);
     IOService_IOService(obj, get_fb_mclass_inst());
     obj[0] = &fb_vtable[0];
     OSMetaClass_instanceConstructed(get_fb_mclass_inst());
@@ -71,7 +69,6 @@ void register_fb_meta_class()
                                   FBDEV_CLASS_NAME,
                                   (void *)IOSERVICE_MCLASS_INST_PTR,
                                   ALEPH_FBDEV_SIZE);
-    log_uint64("fb mc inst: ", (uint64_t)mc);
     if (NULL == mc) {
         cancel();
     }

@@ -57,36 +57,27 @@ void _start() {
         cancel();
     }
 
-    log_uint64("temp: ", 1);
     register_bdev_meta_class();
-    log_uint64("temp: ", 2);
     register_fb_meta_class();
     register_fbuc_meta_class();
-    log_uint64("temp: ", 3);
 
     //TODO: release this object ref
     void *match_dict = IOService_serviceMatching("AppleARMPE", NULL);
-    log_uint64("temp: ", 4);
     //TODO: release this object ref
     void *service = waitForMatchingService(match_dict, -1);
-    log_uint64("temp: ", 5);
     //TODO: release this object ref
     if (0 == service) {
         cancel();
     }
-    log_uint64("temp: ", 6);
 
     //TODO: release this object ref
     void *match_dict_disp = IOService_nameMatching("disp0", NULL);
-    log_uint64("temp: ", 11);
     //TODO: release this object ref
     void *service_disp = waitForMatchingService(match_dict_disp, -1);
 
-    log_uint64("temp: ", 12);
     if (0 == service_disp) {
         cancel();
     }
-    log_uint64("temp: ", 13);
 
     char bdev_prod_name[] = "0AlephBDev";
     char bdev_vendor_name[] = "0Aleph";
@@ -110,7 +101,5 @@ void _start() {
         //}
     }
 
-    log_uint64("temp: ", 7);
     create_new_aleph_fbdev(service_disp);
-    log_uint64("temp: ", 8);
 }

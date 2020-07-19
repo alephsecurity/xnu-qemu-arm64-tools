@@ -69,11 +69,7 @@ static uint64_t fbuc_ext_meth_get_layer_default_sur(void *target,
                                                     void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_get_layer_default_sur()!!!", 0);
     arguments->scalarOutput[0] = 1;
-    log_uint64("arguments->scalarOutput[0]", arguments->scalarOutput[0]);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
-    log_uint64("arguments->scalarInput[1]", arguments->scalarInput[1]);
     return 0;
 }
 
@@ -81,52 +77,18 @@ static uint64_t fbuc_ext_meth_swap_begin(void *target, void *reference,
                                          IOExternalMethodArguments *arguments)
 {
     arguments->scalarOutput[0] = 1;
-    log_uint64("fbuc_ext_meth_swap_begin()!!!", arguments->scalarOutput[0]);
     return 0;
 }
 
 static uint64_t fbuc_ext_meth_swap_end(void *target, void *reference,
                                        IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_swap_end()!!!", 0);
-    log_uint64("((uint64_t *)arguments->structureInput)[0]",
-               ((uint64_t *)arguments->structureOutput)[0]);
-    log_uint64("((uint64_t *)arguments->structureInput)[1]",
-               ((uint64_t *)arguments->structureOutput)[1]);
-    log_uint64("((uint64_t *)arguments->structureInput)[2]",
-               ((uint64_t *)arguments->structureOutput)[2]);
-    log_uint64("((uint64_t *)arguments->structureInput)[37]",
-               ((uint64_t *)arguments->structureOutput)[37]);
-    log_uint64("((uint64_t *)arguments->structureInput)[38]",
-               ((uint64_t *)arguments->structureOutput)[38]);
-    log_uint64("((uint64_t *)arguments->structureInput)[39]",
-               ((uint64_t *)arguments->structureOutput)[39]);
-    log_uint64("((uint64_t *)arguments->structureInput)[40]",
-               ((uint64_t *)arguments->structureOutput)[40]);
-    log_uint64("((uint64_t *)arguments->structureInput)[41]",
-               ((uint64_t *)arguments->structureOutput)[41]);
-    log_uint64("((uint64_t *)arguments->structureInput)[42]",
-               ((uint64_t *)arguments->structureOutput)[42]);
-    log_uint64("((uint64_t *)arguments->structureInput)[43]",
-               ((uint64_t *)arguments->structureOutput)[43]);
-    log_uint64("((uint64_t *)arguments->structureInput)[76]",
-               ((uint64_t *)arguments->structureOutput)[76]);
-    log_uint64("((uint64_t *)arguments->structureInput)[77]",
-               ((uint64_t *)arguments->structureOutput)[77]);
-    log_uint64("((uint64_t *)arguments->structureInput)[78]",
-               ((uint64_t *)arguments->structureOutput)[78]);
-    log_uint64("fbuc_ext_meth_swap_end()!!! arguments->structureInputSize: ",
-               arguments->structureInputSize);
     return 0;
 }
 
 static uint64_t fbuc_ext_meth_swap_wait(void *target, void *reference,
                                         IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_swap_wait()!!!", 0);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
-    log_uint64("arguments->scalarInput[1]", arguments->scalarInput[1]);
-    log_uint64("arguments->scalarInput[2]", arguments->scalarInput[2]);
     return 0;
 }
 
@@ -134,14 +96,12 @@ static uint64_t fbuc_ext_meth_get_id(void *target, void *reference,
                                      IOExternalMethodArguments *arguments)
 {
     arguments->scalarOutput[0] = 2;
-    log_uint64("fbuc_ext_meth_get_id()!!!", arguments->scalarOutput[0]);
     return 0;
 }
 
 static uint64_t fbuc_ext_meth_get_disp_size(void *target, void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_get_disp_size()!!!", 0);
     //TODO: get this input somehow
     arguments->scalarOutput[0] = 600;
     arguments->scalarOutput[1] = 800;
@@ -151,8 +111,6 @@ static uint64_t fbuc_ext_meth_get_disp_size(void *target, void *reference,
 static uint64_t fbuc_ext_meth_req_power_change(void *target, void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_req_power_change()!!!", 0);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
     return 0;
 }
 
@@ -160,9 +118,6 @@ static uint64_t fbuc_ext_meth_set_debug_flags(void *target, void *reference,
                                           IOExternalMethodArguments *arguments)
 {
     arguments->scalarOutput[0] = 1;
-    log_uint64("fbuc_ext_meth_set_debug_flags()!!!", arguments->scalarOutput[0]);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
-    log_uint64("arguments->scalarInput[1]", arguments->scalarInput[1]);
     return 0;
 }
 
@@ -170,11 +125,6 @@ static uint64_t fbuc_ext_meth_set_gamma_table(void *target,
                                               void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_set_gamma_table()!!!", 0);
-    log_uint64("((uint64_t *)arguments->structureOutput)[0]",
-               ((uint64_t *)arguments->structureOutput)[0]);
-    log_uint64("((uint64_t *)arguments->structureOutput)[1]",
-               ((uint64_t *)arguments->structureOutput)[1]);
     return 0;
 }
 
@@ -182,15 +132,12 @@ static uint64_t fbuc_ext_meth_is_main_disp(void *target, void *reference,
                                           IOExternalMethodArguments *arguments)
 {
     arguments->scalarOutput[0] = 1;
-    log_uint64("fbuc_ext_meth_is_main_disp()!!!", arguments->scalarOutput[0]);
     return 0;
 }
 
 static uint64_t fbuc_ext_meth_set_display_dev(void *target, void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_set_display_dev()!!!", 0);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
     return 0;
 }
 
@@ -198,7 +145,6 @@ static uint64_t fbuc_ext_meth_get_gamma_table(void *target,
                                               void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_get_gamma_table()!!!", 0);
     for (int i = 0; i < arguments->structureOutputSize; i++) {
         ((uint8_t *)arguments->structureOutput)[i] = 0x7f;
     }
@@ -211,7 +157,6 @@ static uint64_t fbuc_ext_meth_get_dot_pitch(void *target,
 {
     //arguments->scalarOutput[0] = 152;
     arguments->scalarOutput[0] = 0;
-    log_uint64("fbuc_ext_meth_get_dot_pitch()!!!", arguments->scalarOutput[0]);
     //TODO: get this input somehow
     return 0;
 }
@@ -220,8 +165,6 @@ static uint64_t fbuc_ext_meth_en_dis_vid_power_save(void *target,
                                                     void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_en_dis_vid_power_save()!!!", 0);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
     return 0;
 }
 
@@ -229,10 +172,7 @@ static uint64_t fbuc_ext_meth_surface_is_rep(void *target,
                                              void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_surface_is_rep()!!!", 0);
     arguments->scalarOutput[0] = 1;
-    log_uint64("arguments->scalarOutput[0]", arguments->scalarOutput[0]);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
     return 0;
 }
 
@@ -240,8 +180,6 @@ static uint64_t fbuc_ext_meth_set_bright_corr(void *target,
                                               void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_set_bright_corr()!!!", 0);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
     return 0;
 }
 
@@ -249,12 +187,6 @@ static uint64_t fbuc_ext_meth_set_matrix(void *target,
                                          void *reference,
                                          IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_set_matrix()!!!", 0);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
-    log_uint64("((uint64_t *)arguments->structureInput)[0]",
-               ((uint64_t *)arguments->structureOutput)[0]);
-    log_uint64("((uint64_t *)arguments->structureInput)[1]",
-               ((uint64_t *)arguments->structureOutput)[1]);
     return 0;
 }
 
@@ -264,7 +196,6 @@ static uint64_t fbuc_ext_meth_get_color_remap_mode(void *target,
 {
     arguments->scalarOutput[0] = 6;
     //TODO: this might need to be changed. not sure what the numbers mean
-    log_uint64("fbuc_ext_meth_get_color_remap_mode()!!!", arguments->scalarOutput[0]);
     //arguments->scalarOutput[0] = 6;
     return 0;
 }
@@ -273,10 +204,6 @@ static uint64_t fbuc_ext_meth_set_parameter(void *target,
                                             void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_set_parameter()!!!", 0);
-    log_uint64("arguments->scalarInput[0]", arguments->scalarInput[0]);
-    log_uint64("((uint64_t *)arguments->structureInput)[0]",
-               ((uint64_t *)arguments->structureOutput)[0]);
     return 0;
 }
 
@@ -286,21 +213,12 @@ static uint64_t fbuc_ext_meth_enable_notifications(void *target,
 {
     //TODO: actually implement this to enable tofications
     FBUCMembers *members = get_fbuc_members(target);
-    log_uint64("fbuc_ext_meth_enable_notifications()!!!",
-               arguments->scalarInput[0]);
-    log_uint64("fbuc_ext_meth_enable_notifications()!!!",
-               arguments->scalarInput[1]);
-    log_uint64("fbuc_ext_meth_enable_notifications()!!!",
-               arguments->scalarInput[2]);
-    log_uint64("fbuc_ext_meth_enable_notifications()!!!",
-               arguments->scalarInput[3]);
     uint64_t cb = arguments->scalarInput[0];
     uint64_t ref = arguments->scalarInput[1];
     uint64_t type = arguments->scalarInput[2];
     IOUserClient_setAsyncReference64(&members->notif_ports[type].asnyc_ref64[0],
                                      members->notif_ports[type].port,
                                      cb, ref, members->task);
-    log_uint64("test()!!!", 3);
     return 0;
 }
 
@@ -310,10 +228,6 @@ static uint64_t fbuc_ext_meth_change_frame_info(void *target,
 {
     //TODO: actually implement this
     FBUCMembers *members = get_fbuc_members(target);
-    log_uint64("fbuc_ext_meth_change_frame_info()!!!",
-               arguments->scalarInput[0]);
-    log_uint64("fbuc_ext_meth_change_frame_info()!!!",
-               arguments->scalarInput[1]);
 
     //uint64_t args[2];
     //uint64_t type = arguments->scalarInput[0];
@@ -338,8 +252,6 @@ static uint64_t fbuc_ext_meth_supported_frame_info(void *target,
                                                    void *reference,
                                           IOExternalMethodArguments *arguments)
 {
-    log_uint64("fbuc_ext_meth_supported_frame_info()!!!",
-               arguments->scalarInput[0]);
 
     //Ugly trick we have to do because of how we compile this code
     switch (arguments->scalarInput[0])
@@ -446,54 +358,9 @@ uint64_t fbuc_externalMethod(void *this, uint32_t selector,
     IOExternalMethodDispatch *new_dispatch;
     FBUCMembers *members = get_fbuc_members(this);
 
-    log_uint64("---------------------------------------------", 0);
-    log_uint64("fbuc_externalMethod() target: ", (uint64_t)target);
-    log_uint64("fbuc_externalMethod() reference: ", (uint64_t)reference);
-    log_uint64("---------------------------------------------", 0);
-    log_uint64("fbuc_externalMethod() selector: ", selector);
-    log_uint64("fbuc_externalMethod() args->version: ",
-               (uint64_t)args->version);
-    log_uint64("fbuc_externalMethod() args->selector: ",
-               (uint64_t)args->selector);
-    log_uint64("fbuc_externalMethod() args->unknown1[0]: ",
-               args->unknown1[0]);
-    log_uint64("fbuc_externalMethod() args->unknown1[1]: ",
-               args->unknown1[1]);
-    log_uint64("fbuc_externalMethod() args->unknown1[2]: ",
-               args->unknown1[2]);
-    log_uint64("fbuc_externalMethod() args->scalarInput: ",
-               (uint64_t)args->scalarInput);
-    log_uint64("fbuc_externalMethod() args->scalarInputCount: ",
-               args->scalarInputCount);
-    log_uint64("fbuc_externalMethod() args->align1: ",
-               args->align1);
-    log_uint64("fbuc_externalMethod() args->structureInput: ",
-               (uint64_t)args->structureInput);
-    log_uint64("fbuc_externalMethod() args->structureInputSize: ",
-               args->structureInputSize);
-    log_uint64("fbuc_externalMethod() args->align2: ",
-               args->align2);
-    log_uint64("fbuc_externalMethod() args->structureInputDescriptor: ",
-               (uint64_t)args->structureInputDescriptor);
-    log_uint64("fbuc_externalMethod() args->scalarOutput: ",
-               (uint64_t)args->scalarOutput);
-    log_uint64("fbuc_externalMethod() args->scalarOutputCount: ",
-               args->scalarOutputCount);
-    log_uint64("fbuc_externalMethod() args->align3: ",
-               args->align3);
-    log_uint64("fbuc_externalMethod() args->structureOutput: ",
-               (uint64_t)args->structureOutput);
-    log_uint64("fbuc_externalMethod() args->structureOutputSize: ",
-               args->structureOutputSize);
-    log_uint64("fbuc_externalMethod() args->align4: ",
-               args->align4);
-    log_uint64("fbuc_externalMethod() args->structureOutputDescriptor: ",
-               (uint64_t)args->structureOutputDescriptor);
-    log_uint64("---------------------------------------------", 0);
 
     if ((selector >= FBUC_MAX_EXT_FUNCS) ||
         (0 == members->fbuc_external_methods[selector].function)) {
-        log_uint64("ERR fbuc_externalMethod() no func selector: ", selector);
         cancel();
     }
     new_dispatch = &members->fbuc_external_methods[selector];
@@ -503,7 +370,6 @@ uint64_t fbuc_externalMethod(void *this, uint32_t selector,
 
 uint64_t fbuc_clientClose(void *this)
 {
-    log_uint64("fbuc_clientClose!!", 0);
     void **vtable_ptr = (void **)*(uint64_t *)this;
     FuncIOSerivceTerminate vfunc_terminate =
         (FuncIOSerivceTerminate)vtable_ptr[IOSERVICE_TERMINATE_INDEX];
@@ -513,14 +379,12 @@ uint64_t fbuc_clientClose(void *this)
 
 uint64_t fbuc_connectClient(void *this, void *user_client)
 {
-    log_uint64("fbuc_connectClient not supported", 0);
     cancel();
     return 0;
 }
 
 uint64_t fbuc_getNotificationSemaphore(void *this, uint64_t type, void *sem)
 {
-    log_uint64("fbuc_getNotificationSemaphore not supported", 0);
     cancel();
     return 0;
 }
@@ -528,7 +392,6 @@ uint64_t fbuc_getNotificationSemaphore(void *this, uint64_t type, void *sem)
 uint64_t fbuc_clientMemoryForType(void *this, uint64_t type, void *opts,
                                   void **mem)
 {
-    log_uint64("fbuc_clientMemoryForType not supported", 0);
     cancel();
     return 0;
 }
@@ -536,7 +399,6 @@ uint64_t fbuc_clientMemoryForType(void *this, uint64_t type, void *opts,
 uint64_t fbuc_registerNotificationPort(void *this, void *port,
                                        uint64_t type, uint64_t ref)
 {
-    log_uint64("fbuc_registerNotificationPort!!", type);
     FBUCMembers *members = get_fbuc_members(this);
     if (type >= FBUC_MAX_NOTIF_PORTS) {
         cancel();
@@ -549,7 +411,6 @@ uint64_t fbuc_registerNotificationPort(void *this, void *port,
 
 uint64_t fbuc_initWithTask(void *this, void *task, void *sid, uint64_t type)
 {
-    log_uint64("fbuc_initWithTask!!", (uint64_t)task);
     FBUCMembers *members = get_fbuc_members(this);
     members->task = task;
     return IOUserClient_initWithTask(this, task, sid, type);
@@ -557,7 +418,6 @@ uint64_t fbuc_initWithTask(void *this, void *task, void *sid, uint64_t type)
 
 uint64_t fbuc_destructor(void *this)
 {
-    log_uint64("fbuc_destructor!!", 0);
     void *obj = IOUserClient_destructor(this);
     OSObject_delete(obj, ALEPH_FBUC_SIZE);
     return 0;
