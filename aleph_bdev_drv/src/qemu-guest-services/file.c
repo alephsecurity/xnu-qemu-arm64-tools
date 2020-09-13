@@ -35,7 +35,7 @@ int64_t qc_size_file(uint64_t index)
 {
     qemu_call_t qcall = {
         .call_number = QC_SIZE_FILE,
-        .args.read_file.index = index,
+        .args.size_file.index = index,
     };
 
     return qemu_file_call(&qcall);
