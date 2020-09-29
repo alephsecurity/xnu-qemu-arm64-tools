@@ -6,10 +6,14 @@ ifndef QEMU_DIR
 $(error QEMU_DIR is not set)
 endif
 
+ifndef SDK_DIR
+SDK_DIR = '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk'
+endif
+
 src := $(wildcard src/*.c) $(wildcard src/**/*.c)
 
 CC = clang
-FLAGS = -DOUT_OF_TREE_BUILD -I$(QEMU_DIR)/include -fno-stack-check -fno-stack-protector -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
+FLAGS = -DOUT_OF_TREE_BUILD -I$(QEMU_DIR)/include -fno-stack-check -fno-stack-protector -arch arm64 -isysroot $(SDK_DIR)
 TARGET = tunnel
 
 bin/$(TARGET): $(src)
