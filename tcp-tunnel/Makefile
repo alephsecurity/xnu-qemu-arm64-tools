@@ -7,6 +7,8 @@ $(error QEMU_DIR is not set)
 endif
 
 ifndef SDK_DIR
+# git clone https://github.com/xybp888/iOS-SDKs.git
+# export SDK_DIR=$PWD/iOS-SDKs/iPhoneOS12.4.sdk
 SDK_DIR = '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk'
 endif
 
