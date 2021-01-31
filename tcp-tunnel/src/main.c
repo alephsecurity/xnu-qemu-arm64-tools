@@ -14,6 +14,8 @@
 #define DIR_IN 1
 #define DIR_OUT 2
 
+#define SOCKET_SLEEP 10e3
+
 typedef struct {
     int fd;
     int *error;
@@ -30,6 +32,7 @@ typedef struct {
     ssize_t (*send)(int sckt, const void *buffer, size_t length, int flags);
 } socket_t;
 
+static void verbose_log(const char *log);
 static void init_qemu_socket(socket_t *sock_struct);
 static void init_native_socket(socket_t *sock_struct);
 static void terminate(int signum);
@@ -46,6 +49,7 @@ static int tunnel(socket_t *s_listen, socket_t *in, socket_t *out,
 
 static socket_t s_listen = {.fd = -1}, s_in = {.fd = -1}, s_out = {.fd = -1};
 static int daemonize = 0;
+static int verbose = 0;
 
 int main(int argc, char *argv[])
 {
@@ -58,9 +62,20 @@ int main(int argc, char *argv[])
     case 2:
         break;
     case 3:
+    case 4:
         if (!strncmp(argv[1], "-d", strlen("-d")) ||
             !strncmp(argv[1], "--daemonize", strlen("--daemonize"))) {
                 daemonize = 1;
+                break;
+            }
+        if (!strncmp(argv[1], "-v", strlen("-v")) ||
+            !strncmp(argv[1], "--verbose", strlen("--verbose"))) {
+                verbose = 1;
+
+                if(daemonize) {
+                    fprintf(stderr, "Verbose mode available only in foreground mode\n");
+                    return usage(argv[0]);
+                }
                 break;
             }
     default:
@@ -81,6 +96,8 @@ int main(int argc, char *argv[])
 
 
     if (DIR_IN == direction) {
+        verbose_log("Start tunnel with IN direction mode");
+
         init_qemu_socket(&s_listen);
         init_qemu_socket(&s_in);
         init_native_socket(&s_out);
@@ -88,6 +105,8 @@ int main(int argc, char *argv[])
         return tunnel(&s_listen, &s_in, &s_out, listen_port, target_ip,
                       target_port);
     } else if (DIR_OUT == direction) {
+        verbose_log("Start tunnel with OUT direction mode");
+
         init_native_socket(&s_listen);
         init_native_socket(&s_in);
         init_qemu_socket(&s_out);
@@ -157,10 +176,16 @@ static void terminate(int signum)
 
 static int usage(const char *prog_name)
 {
-    fprintf(stderr, "Usage: %s [-d|--daemonize] [<in|out>:]listen-port:target-ip:target-port\n",
+    fprintf(stderr, "Usage: %s [-d|--daemonize] [-v|--verbose] [<in|out>:]listen-port:target-ip:target-port\n",
             prog_name);
 
     return -1;
+}
+
+static void verbose_log(const char *log) {
+    if (verbose) {
+        fprintf(stdout, "%s\n", log);
+    }
 }
 
 static int parse_address_spec(char* address_spec, uint32_t *listen_port,
@@ -344,6 +369,11 @@ static int tunnel(socket_t *s_listen, socket_t *in, socket_t *out,
                        sizeof(local)) < 0)
     {
         fprintf(stderr, "bind failed: %d\n", *(s_listen->error));
+        
+        if(*(s_listen->error) == 48) {
+            fprintf(stderr, "Port %d already in use\n", listen_port);
+        }
+
         s_listen->close(s_listen->fd);
         return -1;
     }
@@ -378,9 +408,11 @@ static int tunnel(socket_t *s_listen, socket_t *in, socket_t *out,
                 s_listen->close(s_listen->fd);
                 return -1;
             } else {
-                usleep(10000); // TODO: define!
+                usleep(SOCKET_SLEEP);
             }
         } else {
+            verbose_log("New incoming connection detected");
+
             if (handle_incoming_connection(in, out, target_ip,
                                            target_port) < 0) {
                 break;
